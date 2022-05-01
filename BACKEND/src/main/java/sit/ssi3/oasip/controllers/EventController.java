@@ -19,4 +19,9 @@ public class EventController {
     public List<Event> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
         return eventService.getEvent(sortBy);
     }
+    @GetMapping("/{id}")
+    public  Event getEventByID(@PathVariable Integer id){
+        return eventService.getEventById(id);
+    }
+
 }

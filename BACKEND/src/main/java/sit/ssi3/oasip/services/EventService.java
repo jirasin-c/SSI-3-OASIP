@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.repositories.EventRepository;
@@ -18,5 +19,12 @@ public class EventService {
     public List<Event> getEvent(String sortBy){
         Sort sort = Sort.by(sortBy);
         return eventRepository.findAll(sort);
+    }
+    public Event getEventById(Integer id){
+        return eventRepository.findById(id).orElseThrow(()->
+            new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Event ID " + id + "Does not Exits"
+            )
+        );
     }
 }
