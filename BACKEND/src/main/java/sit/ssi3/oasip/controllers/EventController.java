@@ -9,7 +9,7 @@ import sit.ssi3.oasip.services.EventService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/event")
+@RequestMapping("/api/events")
 public class EventController {
     //Service layer
     @Autowired
