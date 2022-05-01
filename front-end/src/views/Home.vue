@@ -1,9 +1,12 @@
 <script setup>
 import EventCard from "../components/EventCard.vue";
+import ShowSelectedEvent from "../components/ShowSelectedEvent.vue";
 import { onBeforeMount, ref } from "vue";
 const event = ref([]);
 const isEmpty = ref(false);
-const selectedEvent = ref([])
+const selectedEvent = ref([]);
+const getEventCategoryName = ref("");
+
 const getEvent = async () => {
   const res = await fetch("http://localhost:3000/api/event");
   event.value = await res.json();
@@ -20,6 +23,13 @@ const convertToLocalDate = async () => {
     const localDate = new Date(e.eventStartTime).toLocaleString();
     e.eventStartTime = localDate;
   });
+};
+
+const getDetailById = async (eventId) => {
+  const res = await fetch(`http://localhost:3000/api/event/${eventId}`);
+  selectedEvent.value = await res.json();
+  getEventCategoryName.value =
+    selectedEvent.value.eventCategoryID.eventCategoryName;
 };
 
 onBeforeMount(async () => {
@@ -45,14 +55,18 @@ onBeforeMount(async () => {
           class="columns-3 gap-6 w-[1100px] mx-auto space-y-6 pb-28 text-2xl mt-10"
           id="style-1"
         >
-          <EventCard :allBooking="event" />
+          <EventCard :allBooking="event" @viewDetail="getDetailById" />
         </div>
       </div>
 
       <div class="bg-gray-200 w-2/6 h-3/4 mt-12 mr-16 rounded-2xl">
-        <p class="text-center pt-72 text-2xl text-gray-400">
+        <p
+          v-if="selectedEvent.length == 0"
+          class="text-center pt-72 text-2xl text-gray-400"
+        >
           Please select some event.
         </p>
+        <ShowSelectedEvent :eventDetail="selectedEvent" :eventCategory="getEventCategoryName" />
       </div>
     </div>
   </div>

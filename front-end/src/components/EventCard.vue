@@ -8,48 +8,39 @@ const prop = defineProps({
   },
 });
 
-
-// const bookingList = ref(allBooking);
-
-// const selectedEvent = [];
-
-// const getSelectedDetail = (selected) => {
-//   selectedEvent.push(bookingList.selected);
-//   console.log(selectedEvent);
-// };
+defineEmits(["viewDetail"]);
 </script>
 
 <template>
   <div>
-    <div
-      v-for="(booking, index) in allBooking"
+    <button
+      v-for="booking in allBooking"
       :key="booking.id"
-      class="grid break-inside-avoid rounded-xl p-4 mb-8 bg-white w-full break-words drop-shadow-md text-ellipsis overflow-hidden"
-      @click="getSelectedDetail(index)"
+      class="hover:bg-zinc-200 transition duration-300 grid text-left break-inside-avoid rounded-xl p-4 mb-8 bg-white w-full break-words drop-shadow-md text-ellipsis overflow-hidden"
+      @click="$emit('viewDetail', booking.id)"
     >
       <div class="flex flex-row">
         <div>
           <span
             ><b>Name: {{ booking.bookingName }}</b
             ><br />
-            <b>Category: {{ booking.eventCategoryID.eventCategoryName }}</b></span
+            <b
+              >Category: {{ booking.eventCategoryID.eventCategoryName }}</b
+            ></span
           >
 
           <br />
           Date: {{ booking.eventStartTime }}<br />
           Duration: {{ booking.eventDuration }}<br />
         </div>
-        <!-- <div>
-          <button
-            @click="editMsg"
-            class="btn btn-outline btn-circle h-[30px] w-[30px]"
-          >
-            <MdiTrashCan />
-          </button>
-        </div> -->
       </div>
-    </div>
+    </button>
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.button2:hover {
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+</style>

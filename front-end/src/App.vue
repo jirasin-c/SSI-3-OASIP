@@ -3,7 +3,8 @@ import Navbar from "./components/Navbar.vue";
 </script>
 
 <template>
-  <div :style="{'background-image':'url(\'./assets/img/bg.jpeg\')'}">
+  <div>
+    <!-- <div :style="{'background-image':'url(\'./assets/img/bg.jpeg\')'}"> -->
     <Navbar />
   </div>
 </template>
