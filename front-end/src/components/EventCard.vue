@@ -39,14 +39,14 @@ const prop = defineProps({
           Duration: {{ booking.duration }}<br />
           Notes: {{ booking.notes }}
         </div>
-        <div>
+        <!-- <div>
           <button
             @click="editMsg"
             class="btn btn-outline btn-circle h-[30px] w-[30px]"
           >
             <MdiTrashCan />
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
