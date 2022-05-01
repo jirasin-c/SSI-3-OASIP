@@ -78,13 +78,12 @@ const dataList = [
 
 <template>
   <div>
-    <div class="flex justify-between">
+    <div>
       <div class="mt-10 ml-16 text-2xl">CURRENT BOOKING</div>
-      <div class="mt-10 mr-96 text-2xl">SELECTED EVENT</div>
     </div>
     <div class="flex flex-row h-screen">
       <div
-        class="bg-gray-100 w-5/6 h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto"
+        class="bg-gray-200 w-5/6 h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto"
       >
         <div
           class="columns-3 gap-6 w-[1100px] mx-auto space-y-6 pb-28 text-2xl mt-10"
@@ -97,7 +96,8 @@ const dataList = [
           <EventCard :allBooking="dataList" />
         </div>
       </div>
-      <div class="bg-gray-100 w-2/6 h-3/4 mt-12 mr-16 rounded-2xl">
+
+      <div class="bg-gray-200 w-2/6 h-3/4 mt-12 mr-16 rounded-2xl">
         <p class="text-center pt-72 text-2xl text-gray-400">
           Please select some event.
         </p>
@@ -106,4 +106,5 @@ const dataList = [
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
