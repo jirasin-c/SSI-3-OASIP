@@ -8,6 +8,7 @@ const prop = defineProps({
   },
 });
 
+
 // const bookingList = ref(allBooking);
 
 // const selectedEvent = [];
@@ -23,21 +24,20 @@ const prop = defineProps({
     <div
       v-for="(booking, index) in allBooking"
       :key="booking.id"
-      class="grid break-inside-avoid rounded-xl p-10 bg-white w-full break-words drop-shadow-lg text-ellipsis overflow-hidden mt-10"
+      class="grid break-inside-avoid rounded-xl p-4 mb-8 bg-white w-full break-words drop-shadow-md text-ellipsis overflow-hidden"
       @click="getSelectedDetail(index)"
     >
       <div class="flex flex-row">
         <div>
           <span
-            ><b>Name: {{ booking.name }}</b
+            ><b>Name: {{ booking.bookingName }}</b
             ><br />
-            <b>Category: {{ booking.category }}</b></span
+            <b>Category: {{ booking.eventCategoryID.eventCategoryName }}</b></span
           >
 
           <br />
-          Date: {{ booking.date }}<br />
-          Duration: {{ booking.duration }}<br />
-          Notes: {{ booking.notes }}
+          Date: {{ booking.eventStartTime }}<br />
+          Duration: {{ booking.eventDuration }}<br />
         </div>
         <!-- <div>
           <button
