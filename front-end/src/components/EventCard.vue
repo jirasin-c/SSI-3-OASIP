@@ -13,10 +13,10 @@ defineEmits(["viewDetail"]);
 
 <template>
   <div>
-    <button
+    <div
       v-for="booking in allBooking"
       :key="booking.id"
-      class="hover:bg-zinc-200 transition duration-300 grid text-left break-inside-avoid rounded-xl p-4 mb-8 bg-white w-full break-words drop-shadow-md text-ellipsis overflow-hidden"
+      class="cursor hover:bg-zinc-200 transition duration-300 grid text-left break-inside-avoid rounded-xl p-4 mb-8 bg-white w-full break-words drop-shadow-md text-ellipsis overflow-hidden"
       @click="$emit('viewDetail', booking.id)"
     >
       <div class="flex flex-row">
@@ -34,7 +34,7 @@ defineEmits(["viewDetail"]);
           Duration: {{ booking.eventDuration }}<br />
         </div>
       </div>
-    </button>
+    </div>
   </div>
 </template>
 
@@ -42,5 +42,9 @@ defineEmits(["viewDetail"]);
 .button2:hover {
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
     0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+.cursor {
+  cursor: pointer;
 }
 </style>
