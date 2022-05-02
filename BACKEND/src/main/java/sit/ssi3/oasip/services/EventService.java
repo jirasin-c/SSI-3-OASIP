@@ -17,14 +17,13 @@ public class EventService {
     private EventRepository eventRepository;
 
     public List<Event> getEvent(String sortBy){
-        Sort sort = Sort.by(sortBy);
-        return eventRepository.findAll(sort);
+        return eventRepository.findAll(Sort.by(sortBy).descending());
     }
     public Event getEventById(Integer id){
         return eventRepository.findById(id).orElseThrow(()->
-            new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Event ID " + id + "Does not Exits"
-            )
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Event ID " + id + "Does not Exits"
+                )
         );
     }
 }
