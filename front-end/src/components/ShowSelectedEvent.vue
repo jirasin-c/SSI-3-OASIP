@@ -18,11 +18,12 @@ defineEmits(['clear'])
   <div>
     <div class="text-2xl mx-auto text-center pt-72">
       <b>Name: {{ prop.eventDetail.bookingName }}</b><br>
-      <b>Category: {{ prop.eventCategory }}</b>
+      <b>Email: {{ prop.eventDetail.bookingEmail }}</b><br>
+      <b>Category: {{ prop.eventCategory }}</b><br>
       <p>Date: {{ prop.eventDetail.eventStartTime }}</p>
       <p>Duration: {{ prop.eventDetail.eventDuration }}</p>
-      <p>Email: {{ prop.eventDetail.bookingEmail }}</p>
-      <p v-show="prop.eventDetail.eventNotes != ''">Notes: {{ prop.eventDetail.eventNotes }}</p>
+      <p v-if="prop.eventDetail.eventNotes != ''">Notes: {{ prop.eventDetail.eventNotes }}</p>
+      <p v-else>Notes: no message.</p>
       <button class="rounded-xl bg-blue-200 w-24 mt-10" @click="$emit('clear', $event)">Clear</button>
     </div>
   </div>
