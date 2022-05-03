@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onBeforeUnmount } from "vue";
 import IcPerson from "../icons/IcBaselinePerson.vue";
 import IcEmail from "../icons/IcBaselineEmail.vue";
 import IcTimer from "../icons/IcBaselineTimer.vue";
@@ -10,10 +10,16 @@ const selectedEvent = ref([]);
 const getEventCategoryName = ref("");
 let { params } = useRoute();
 const bookingId = params.bookingId;
+const recentBooking = ref("");
 
 const getDetailById = async () => {
-  const res = await fetch(`http://localhost:3000/api/events/${bookingId}`);
+  if (recentBooking.value !== "") {
+    const res = await fetch(`/api/events/${recentBooking}`);
+    selectedEvent.value = await res.json();
+  }
+  const res = await fetch(`/api/events/${bookingId}`);
   selectedEvent.value = await res.json();
+  recentBooking.value = bookingId;
   getEventCategoryName.value =
     selectedEvent.value.eventCategoryID.eventCategoryName;
   const localDate = new Date(selectedEvent.value.eventStartTime).toLocaleString(
@@ -34,6 +40,10 @@ onBeforeMount(async () => {
   await getDetailById();
   console.log(selectedEvent.value);
 });
+
+window.onbeforeunload = function () {
+  return "Dude, are you sure you want to leave? Think of the kittens!";
+};
 </script>
 
 <template>

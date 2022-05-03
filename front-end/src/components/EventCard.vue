@@ -17,7 +17,6 @@ defineEmits(["viewDetail"]);
       <router-link :to="{ name: 'Detail', params: { bookingId: booking.id } }">
         <div
           class="cursor hover:bg-zinc-200 transition duration-300 grid break-inside-avoid rounded-xl p-4 mb-8 w-full break-words drop-shadow-md text-ellipsis overflow-hidden bg-gradient-to-r from-white to-gray-200 text-slate-500"
-          @click="$emit('viewDetail', booking.id)"
         >
           <div class="badge badge-outline">
             {{ booking.eventCategoryID.eventCategoryName }}
