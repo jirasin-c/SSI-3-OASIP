@@ -7,6 +7,11 @@ const routes = [
     name: "Home",
     component: Home,
   },
+  {
+    path: "/event",
+    name: "Event",
+    component: Event,
+  },
 ];
 
 const router = createRouter({ history, routes });

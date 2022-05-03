@@ -2,8 +2,8 @@
 
 <template>
   <div class="overflow-hidden">
-    <div class="w-screen bg-orange-400 h-14 flex flex-row">
-      <div class="text-white text-2xl mt-3 ml-6">MODTALK</div>
+    <div class="navbar bg-rose-500 text-primary-content">
+      <a class="btn btn-ghost normal-case text-xl">MODTALK</a>
     </div>
     <router-view></router-view>
   </div>

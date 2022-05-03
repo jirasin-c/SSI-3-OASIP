@@ -47,23 +47,23 @@ onBeforeMount(async () => {
       <div class="mt-10 ml-16 text-2xl">CURRENT BOOKING</div>
     </div>
     <div class="flex flex-row h-screen">
-      <div class="bg-gray-200 w-5/6 h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
+      <div class="bg-gray-200 w-full h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
         <div v-show="isEmpty" class="grid justify-items-center pt-72">
           <p class="text-2xl text-gray-400">List currently empty</p>
         </div>
 
-        <div class="columns-3 gap-6 w-[1100px] mx-auto space-y-6 pb-28 text-2xl mt-10" id="style-1">
+        <div class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-28 text-2xl mt-10" id="style-1">
           <EventCard :allBooking="event" @viewDetail="getDetailById" />
         </div>
       </div>
-
+<!-- 
       <div class="bg-gray-200 w-2/6 h-3/4 mt-12 mr-16 rounded-2xl">
         <p v-if="selectedEvent.length == 0" class="text-center pt-72 text-2xl text-gray-400">
           Please select some event.
         </p>
         <ShowSelectedEvent v-else :eventDetail="selectedEvent" :eventCategory="getEventCategoryName"
           @clear="clearDetail" />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

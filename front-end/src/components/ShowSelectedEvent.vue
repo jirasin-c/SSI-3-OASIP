@@ -26,6 +26,7 @@ defineEmits(['clear'])
       <p v-else>Notes: no message.</p>
       <button class="rounded-xl bg-blue-200 w-24 mt-10" @click="$emit('clear', $event)">Clear</button>
     </div>
+    
   </div>
 </template>
 
