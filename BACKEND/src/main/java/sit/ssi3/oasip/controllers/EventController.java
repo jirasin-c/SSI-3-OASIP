@@ -24,4 +24,10 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Event createEvent(@RequestBody Event newEvent){
+        return eventService.createEvent(newEvent);
+    }
+
 }
