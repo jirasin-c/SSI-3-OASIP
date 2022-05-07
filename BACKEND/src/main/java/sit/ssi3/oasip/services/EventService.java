@@ -26,4 +26,7 @@ public class EventService {
                 )
         );
     }
+    public Event createEvent(Event newEvent){
+        return eventRepository.saveAndFlush(newEvent);
+    }
 }

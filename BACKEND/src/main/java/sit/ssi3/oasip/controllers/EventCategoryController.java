@@ -22,5 +22,7 @@ public class EventCategoryController {
         return eventCategoryService.getEventCategory();
     }
 
+
+
 }
 
