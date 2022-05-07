@@ -35,20 +35,17 @@ onBeforeMount(async () => {
 <template>
   <div>
     <div>
-      <div class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">CURRENT BOOKING</div>
+      <div
+        class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+        CURRENT BOOKING</div>
     </div>
     <div class="flex flex-row h-screen">
-      <div
-        class="shadow-inner shadow-lg glass w-full h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto"
-      >
+      <div class="shadow-inner shadow-lg glass w-full h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
         <div v-show="isEmpty" class="grid justify-items-center pt-72">
           <p class="text-2xl text-gray-400">List currently empty</p>
         </div>
 
-        <div
-          class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-28 text-2xl mt-10"
-          id="style-1"
-        >
+        <div class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10" id="style-1">
           <EventCard :allBooking="event" />
         </div>
       </div>
@@ -64,4 +61,5 @@ onBeforeMount(async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
