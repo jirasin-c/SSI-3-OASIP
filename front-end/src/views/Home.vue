@@ -46,7 +46,7 @@ onBeforeMount(async () => {
         </div>
 
         <div
-          class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-28 text-2xl mt-10"
+          class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10"
           id="style-1"
         >
           <EventCard :allBooking="event" />

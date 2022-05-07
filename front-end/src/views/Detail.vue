@@ -51,7 +51,7 @@ window.onbeforeunload = function () {
     <div class="hero min-h-screen bg-base-200">
       <div class="hero-content text-center">
         <div
-          class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 m-4 shadow-xl backdrop-blur-sm"
+          class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm"
         >
           <div class="card-body text-3xl">
             <p
@@ -60,22 +60,28 @@ window.onbeforeunload = function () {
               {{ getEventCategoryName }}
             </p>
             <div class="divider"></div>
+            <div>
+              <p>Name: {{ selectedEvent.bookingName }}</p>
+              <br />
+              <p>Email: {{ selectedEvent.bookingEmail }}</p>
+              <br />
+              <p>Duration: {{ selectedEvent.eventDuration }} min.</p>
+              <br />
+              <p v-if="selectedEvent.eventNotes != ''">
+                Notes: {{ selectedEvent.eventNotes }}
+              </p>
+              <p v-else>Notes: no message.</p>
+              <br />
+              <p>Date: {{ selectedEvent.eventStartTime }}</p>
+            </div>
 
-            <p>Name: {{ selectedEvent.bookingName }}</p>
-            <br />
-            <p>Email: {{ selectedEvent.bookingEmail }}</p>
-            <br />
-            <p>Duration: {{ selectedEvent.eventDuration }} min.</p>
-            <br />
-            <p v-if="selectedEvent.eventNotes != ''">
-              Notes: {{ selectedEvent.eventNotes }}
-            </p>
-            <p v-else>Notes: no message.</p>
-            <br />
-            <p>Date: {{ selectedEvent.eventStartTime }}</p>
             <div class="card-actions justify-end">
               <router-link :to="{ name: 'Home' }"
-                ><button class="btn btn-primary">Go back</button></router-link
+                ><button
+                  class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600"
+                >
+                  Go back
+                </button></router-link
               >
             </div>
           </div>
