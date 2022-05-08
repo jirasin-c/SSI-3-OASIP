@@ -96,7 +96,7 @@ onBeforeMount(async () => {
                             <label for="">Category</label>
                             <!-- <label class="input-group col-span-3 md:w-11/12 md:mr-6"> -->
                             <select name="" id="" v-model="selectedCategory">
-                                <option v-for="category in eventCategory">
+                                <option v-for="category in eventCategory" :key="category">
                                     {{ category.eventCategoryName }}</option>
                             </select>
                             <!-- </label> -->
