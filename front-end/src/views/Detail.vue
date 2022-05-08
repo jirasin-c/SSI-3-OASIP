@@ -50,13 +50,10 @@ window.onbeforeunload = function () {
   <div>
     <div class="hero min-h-screen bg-base-200">
       <div class="hero-content text-center">
-        <div
-          class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 m-4 shadow-xl backdrop-blur-sm"
-        >
+        <div class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 m-4 shadow-xl backdrop-blur-sm">
           <div class="card-body text-3xl">
             <p
-              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4"
-            >
+              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4">
               {{ getEventCategoryName }}
             </p>
             <div class="divider"></div>
@@ -74,9 +71,7 @@ window.onbeforeunload = function () {
             <br />
             <p>Date: {{ selectedEvent.eventStartTime }}</p>
             <div class="card-actions justify-end">
-              <router-link :to="{ name: 'Home' }"
-                ><button class="btn btn-primary">Go back</button></router-link
-              >
+              <router-link :to="{ name: 'Home' }"><button class="btn btn-primary">Go back</button></router-link>
             </div>
           </div>
         </div>
@@ -85,4 +80,5 @@ window.onbeforeunload = function () {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
