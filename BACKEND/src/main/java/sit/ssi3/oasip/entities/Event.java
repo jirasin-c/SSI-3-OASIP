@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 public class Event {
     @Id
     @Column(name = "eventID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
 
     @Column(name = "bookingName", nullable = false, length = 100)
     private String bookingName;
