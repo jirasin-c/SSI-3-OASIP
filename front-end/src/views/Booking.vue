@@ -93,20 +93,13 @@ onBeforeMount(async () => {
                         </p>
                         <div class="divider"></div>
                         <div>
-<<<<<<< HEAD
                             <label for="" class="collapse-title text-xl font-medium ">Category
                                 :
 
                             </label>
                             <select class="select select-secondary w-full max-w-xs " name="" id=""
                                 v-model="selectedCategory">
-                                <option v-for="category in eventCategory">
-=======
-                            <label for="">Category</label>
-                            <!-- <label class="input-group col-span-3 md:w-11/12 md:mr-6"> -->
-                            <select name="" id="" v-model="selectedCategory">
-                                <option v-for="category in eventCategory" :key="category">
->>>>>>> 213d64e05f1aff8d1e506af97f48416f3f291824
+                                <option v-for="category in eventCategory " :key="category">
                                     {{ category.eventCategoryName }}</option>
                             </select>
 
