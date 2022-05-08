@@ -1,6 +1,7 @@
 <script setup>
 import MdiTrashCan from "./MdiTrashCan.vue";
 import { ref } from "vue";
+import RiDeleteBin6Line from "./RiDeleteBin6Line.vue";
 const prop = defineProps({
   allBooking: {
     type: Array,
@@ -28,7 +29,12 @@ defineEmits(["viewDetail"]);
               <br />
               Date: {{ booking.eventStartTime }}<br />
               Duration: {{ booking.eventDuration }} mins.<br />
+
             </div>
+
+          </div>
+          <div class="justify-end flex">
+            <RiDeleteBin6Line />
           </div>
         </div>
       </router-link>

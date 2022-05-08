@@ -15,7 +15,7 @@ const dolog = async () => {
     // console.log(date.value);
     const utc = new Date(startTime.value).toISOString()
     startTime.value = utc
-    // console.log(utc);
+    console.log(utc);
     // console.log(selectedCategory.value);
 
     eventCategory.value.filter((findID) => {
@@ -93,34 +93,46 @@ onBeforeMount(async () => {
                         </p>
                         <div class="divider"></div>
                         <div>
-                            <label for="">Category</label>
-                            <!-- <label class="input-group col-span-3 md:w-11/12 md:mr-6"> -->
-                            <select name="" id="" v-model="selectedCategory">
+                            <label for="" class="collapse-title text-xl font-medium ">Category
+                                :
+
+                            </label>
+                            <select class="select select-secondary w-full max-w-xs " name="" id=""
+                                v-model="selectedCategory">
                                 <option v-for="category in eventCategory">
                                     {{ category.eventCategoryName }}</option>
                             </select>
-                            <!-- </label> -->
+
                         </div>
                         <div>
-                            <label for="">Start time</label>
-                            <input type="datetime-local" v-model="startTime">
+                            <label for="" class="collapse-title text-xl font-medium ">Start time
+                                : </label>
+                            <input type="datetime-local" placeholder="Type here"
+                                class="input input-bordered input-secondary w-full max-w-xs" v-model="startTime" />
+
                         </div>
                         <div>
-                            <label for="">Name</label>
-                            <input type="text" v-model="name" placeholder="Type yourname...">
+                            <label for="" class="collapse-title text-xl font-medium">Name : </label>
+
+                            <input type="text" placeholder="Type yourname..."
+                                class="input input-bordered input-secondary w-full max-w-xs" v-model="name" />
                         </div>
                         <!-- <div>
                             <label for="">Last Name</label>
                             <input type="text" v-model="lastName">
                         </div> -->
                         <div>
-                            <label for="">Email</label>
-                            <input type="email" v-model="email" placeholder="example@mail.kmutt.ac.th">
+                            <label for="" class="collapse-title text-xl font-medium">Email : </label>
+
+                            <input type="email" placeholder="example@mail.kmutt.ac.th"
+                                class="input input-bordered input-secondary w-full max-w-xs" v-model="email" />
+
                         </div>
                         <div>
-                            <label for="">Notes</label>
+                            <label for="" class="collapse-title text-xl font-medium ">Notes : </label>
+
                             <textarea name="" id="" cols="30" rows="4" v-model="notes"
-                                placeholder="Type something..."></textarea>
+                                class="textarea textarea-secondary " placeholder="Type something..."></textarea>
                         </div>
                         <div class="card-actions justify-center">
 
