@@ -12,8 +12,6 @@ import java.util.List;
 public class EventCategoryService {
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
-
-    @GetMapping("")
     public List<Eventcategory> getEventCategory(){
         return eventCategoryRepository.findAll();
     }

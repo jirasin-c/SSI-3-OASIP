@@ -35,7 +35,6 @@ const getDetailById = async () => {
   );
   selectedEvent.value.eventStartTime = localDate;
 };
-
 onBeforeMount(async () => {
   await getDetailById();
   console.log(selectedEvent.value);
@@ -50,19 +49,18 @@ window.onbeforeunload = function () {
   <div>
     <div class="hero min-h-screen bg-base-200">
       <div class="hero-content text-center">
-        <div class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 m-4 shadow-xl backdrop-blur-sm">
+        <div class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm">
           <div class="card-body text-3xl">
             <p
               class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4">
               {{ getEventCategoryName }}
             </p>
             <div class="divider"></div>
-
             <p>Name: {{ selectedEvent.bookingName }}</p>
             <br />
             <p>Email: {{ selectedEvent.bookingEmail }}</p>
             <br />
-            <p>Duration: {{ selectedEvent.eventDuration }} min.</p>
+            <p>Duration: {{ selectedEvent.eventDuration }} mins.</p>
             <br />
             <p v-if="selectedEvent.eventNotes != ''">
               Notes: {{ selectedEvent.eventNotes }}
@@ -71,7 +69,9 @@ window.onbeforeunload = function () {
             <br />
             <p>Date: {{ selectedEvent.eventStartTime }}</p>
             <div class="card-actions justify-end">
-              <router-link :to="{ name: 'Home' }"><button class="btn btn-primary">Go back</button></router-link>
+              <router-link :to="{ name: 'Home' }"><button
+                  class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600">Go back</button>
+              </router-link>
             </div>
           </div>
         </div>
