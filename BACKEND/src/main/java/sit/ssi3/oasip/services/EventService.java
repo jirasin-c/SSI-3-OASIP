@@ -29,4 +29,10 @@ public class EventService {
     public Event createEvent(Event newEvent){
         return eventRepository.saveAndFlush(newEvent);
     }
+
+    public void cancelEvent(Integer eventID){
+        eventRepository.findById(eventID).orElseThrow(()-> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,"Event ID " + eventID + " Does Not Exits!!!"));
+        eventRepository.deleteById(eventID);
+    }
 }
