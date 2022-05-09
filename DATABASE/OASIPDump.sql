@@ -89,3 +89,5 @@ UNLOCK TABLES;
 CREATE USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'trimitr56';
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 flush privileges;
+set time_zone = '+7:00';
+set global time_zone = '+7:00';
