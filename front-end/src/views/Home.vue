@@ -65,13 +65,33 @@ onBeforeMount(async () => {
           <p class="text-2xl text-gray-400">List currently empty</p>
         </div>
 
-        <div class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1">
-          <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent" />
+        <!-- <div class=" columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1"> -->
+        <div class=" w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10">
+          <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent"
+            class=" grid grid-cols-3 gap-6 " />
         </div>
+
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+::-webkit-scrollbar {
+  width: 16px;
+
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(180deg, #D0368A 0%, #708AD4 99%);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: 100px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
 </style>
