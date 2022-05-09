@@ -1,6 +1,6 @@
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-import { ref, onBeforeMount, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
+import { ref, onBeforeMount } from "vue";
 import IcPerson from "../icons/IcBaselinePerson.vue";
 import IcEmail from "../icons/IcBaselineEmail.vue";
 import IcTimer from "../icons/IcBaselineTimer.vue";
@@ -10,16 +10,10 @@ const selectedEvent = ref([]);
 const getEventCategoryName = ref("");
 let { params } = useRoute();
 const bookingId = params.bookingId;
-const recentBooking = ref("");
 
 const getDetailById = async () => {
-  if (recentBooking.value !== "") {
-    const res = await fetch(`/api/events/${recentBooking}`);
-    selectedEvent.value = await res.json();
-  }
   const res = await fetch(`/api/events/${bookingId}`);
   selectedEvent.value = await res.json();
-  recentBooking.value = bookingId;
   getEventCategoryName.value =
     selectedEvent.value.eventCategoryID.eventCategoryName;
   const localDate = new Date(selectedEvent.value.eventStartTime).toLocaleString(
@@ -37,42 +31,60 @@ const getDetailById = async () => {
 };
 onBeforeMount(async () => {
   await getDetailById();
-  console.log(selectedEvent.value);
 });
 
 window.onbeforeunload = function () {
-  return "Dude, are you sure you want to leave? Think of the kittens!";
+  return true;
 };
+
 </script>
 
 <template>
   <div>
     <div class="hero min-h-screen bg-base-200">
-      <div class="hero-content text-center">
+      <div class="hero-content text-left">
         <div class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm">
-          <div class="card-body text-3xl">
+          <div class="card-body text-3xl place-self-center">
             <p
-              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4">
+              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center ">
               {{ getEventCategoryName }}
             </p>
             <div class="divider"></div>
-            <p>Name: {{ selectedEvent.bookingName }}</p>
+
+            <p>
+              <IcPerson class="inline-block mr-5" /> Name: {{ selectedEvent.bookingName }}
+            </p>
             <br />
-            <p>Email: {{ selectedEvent.bookingEmail }}</p>
+            <p>
+              <IcEmail class="inline-block mr-5 " />
+              Email: {{ selectedEvent.bookingEmail }}
+            </p>
             <br />
-            <p>Duration: {{ selectedEvent.eventDuration }} mins.</p>
+            <p>
+              <IcTimer class="inline-block mr-5" />
+              Duration: {{ selectedEvent.eventDuration }} mins
+            </p>
             <br />
             <p v-if="selectedEvent.eventNotes != ''">
+
+              <IcNote class="inline-block mr-5" />
               Notes: {{ selectedEvent.eventNotes }}
             </p>
-            <p v-else>Notes: no message.</p>
+            <p v-else>
+              <IcNote class="inline-block mr-5" />
+              Notes: NO MESSAGE
+            </p>
             <br />
-            <p>Date: {{ selectedEvent.eventStartTime }}</p>
-            <div class="card-actions justify-end">
-              <router-link :to="{ name: 'Home' }"><button
-                  class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600">Go back</button>
-              </router-link>
-            </div>
+            <p>
+              <IcCalendar class="inline-block mr-5" />
+              Date: {{ selectedEvent.eventStartTime }}
+            </p>
+          </div>
+          <div class="card-actions justify-end m-5">
+            <router-link :to="{ name: 'Home' }"><button
+                class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500">Go
+                back</button>
+            </router-link>
           </div>
         </div>
       </div>

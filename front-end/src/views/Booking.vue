@@ -1,72 +1,54 @@
 <script setup>
+import { computed } from '@vue/reactivity';
 import { ref, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
 import MdiTrashCan from '../components/MdiTrashCan.vue';
 const eventCategory = ref([])
 const selectedCategory = ref('Project Management Clinic')
-const startTime = ref('')
+const startTime = ref(null)
 const name = ref('')
 const categoryID = ref()
-// const firstName = ref('')
-// const lastName = ref('')
+const falseInput = ref(false)
 const email = ref('')
 const notes = ref('')
 const duration = ref()
-const dolog = async () => {
-    // console.log(date.value);
-    const utc = new Date(startTime.value).toISOString()
-    startTime.value = utc
-    console.log(utc);
-    // console.log(selectedCategory.value);
-
-    eventCategory.value.filter((findID) => {
-        // console.log(findID);
-        // console.log(findID.eventCategoryName);
-        // console.log(findID.eventCategoryName === selectedCategory.value);
-        // console.log("current:" + selectedCategory.value);
-
-        if (findID.eventCategoryName === selectedCategory.value) {
-            // console.log(findID.id);
-            // console.log(findID.eventDuration);
-            categoryID.value = findID.id
-            duration.value = findID.eventDuration
-            // console.log(duration.value);
-        }
-    });
-
-    // console.log("categoryID: " + categoryID.value, "category: " + selectedCategory.value, "start time: " + startTime.value, "name: " + name.value, "email: " + email.value, "notes: " + notes.value, "duration:" + duration.value + "mins");
-
-    await createEvent()
-}
+const appRouter = useRouter()
 
 const createEvent = async () => {
-
-    const res = await fetch('/api/events', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify({
-            bookingName: name.value,
-            bookingEmail: email.value,
-            eventStartTime: startTime.value,
-            eventDuration: duration.value,
-            eventNotes: notes.value,
-            eventCategoryID: {
-                id: categoryID.value,
-            }
-        })
-    })
-    if (res.status === 201) {
-        //     const addStory = await res.json()
-        //     stories.value.push(addStory)
-        //     console.log('added');
-        console.log('created');
+    const utc = new Date(startTime.value).toISOString()
+    startTime.value = utc
+    eventCategory.value.filter((findID) => {
+        if (findID.eventCategoryName === selectedCategory.value) {
+            categoryID.value = findID.id
+            duration.value = findID.eventDuration
+        }
+    });
+    if (name.value == '' || email.value == '' || startTime.value == null) {
+        falseInput.value = true
     } else {
-        console.log('can not create');
+        const res = await fetch('/api/events', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                bookingName: name.value,
+                bookingEmail: email.value,
+                eventStartTime: startTime.value,
+                eventDuration: duration.value,
+                eventNotes: notes.value,
+                eventCategoryID: {
+                    id: categoryID.value,
+                }
+            })
+        })
+        if (res.status === 201) {
+            console.log('created');
+            appRouter.push({ name: 'Home' })
+        } else {
+            console.log('can not create');
+        }
     }
-    // inputStory.value = ''
-    // inputTitle.value = ''
-    // console.log(inputStory.value, inputTitle.value);
 }
 const getEventCategory = async () => {
     const res = await fetch("/api/event-category")
@@ -82,62 +64,75 @@ onBeforeMount(async () => {
  
 <template>
     <div>
-        <div class="hero min-h-screen bg-base-200" style="fo">
-            <div class="hero-content text-center">
+        <div class="hero min-h-screen bg-base-200">
+            <div class="hero-content text-left ">
                 <div
-                    class="card w-[1500px] h-full bg-gradient-to-r from-base-100 to-base-200 m-4 shadow-xl backdrop-blur-sm">
-                    <div class="card-body text-3xl">
+                    class="card w-[1000px] bg-gradient-to-r from-base-100 to-base-200 mb-16 shadow-xl backdrop-blur-sm">
+                    <div class="card-body text-3xl place-self-center">
                         <p
-                            class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-4">
+                            class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 pb-2 text-center">
                             Booking Event
                         </p>
                         <div class="divider"></div>
-                        <div>
-                            <label for="" class="collapse-title text-xl font-medium ">Category
-                                :
-
-                            </label>
-                            <select class="select select-secondary w-full max-w-xs " name="" id=""
-                                v-model="selectedCategory">
-                                <option v-for="category in eventCategory " :key="category">
-                                    {{ category.eventCategoryName }}</option>
-                            </select>
-
+                        <div class="flex justify-center pb-5">
+                            <div class="form-control w-full max-w-xs">
+                                <label for="category" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Category: <span class="text-red-500">*</span>
+                                    </span>
+                                </label>
+                                <select class="select select-secondary w-full max-w-xs  text-lg" id="category"
+                                    v-model="selectedCategory">
+                                    <option v-for="category in eventCategory " :key="category">
+                                        {{ category.eventCategoryName }}</option>
+                                </select>
+                                <label for="starttime" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Start time: <span class="text-red-500">*</span>
+                                    </span>
+                                </label>
+                                <input type="datetime-local" placeholder="Type here"
+                                    class="input input-bordered input-secondary w-full max-w-xs text-lg"
+                                    v-model="startTime" id="starttime" />
+                                <label for="name" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Name : <span class="text-red-500">*</span>
+                                    </span>
+                                </label>
+                                <input type="text" placeholder="Type yourname..."
+                                    class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
+                                    id="name" />
+                                <label for="email" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Email : <span class="text-red-500">*</span>
+                                    </span>
+                                </label>
+                                <input type="email" placeholder="example@mail.kmutt.ac.th"
+                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg"
+                                    v-model="email" id="email" />
+                                <label for="notes" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Notes :
+                                    </span>
+                                </label>
+                                <textarea id="notes" cols="30" rows="3" v-model="notes"
+                                    class="textarea textarea-secondary  text-lg w-full overflow-auto"
+                                    placeholder="Type something..."></textarea>
+                            </div>
                         </div>
-                        <div>
-                            <label for="" class="collapse-title text-xl font-medium ">Start time
-                                : </label>
-                            <input type="datetime-local" placeholder="Type here"
-                                class="input input-bordered input-secondary w-full max-w-xs" v-model="startTime" />
-
-                        </div>
-                        <div>
-                            <label for="" class="collapse-title text-xl font-medium">Name : </label>
-
-                            <input type="text" placeholder="Type yourname..."
-                                class="input input-bordered input-secondary w-full max-w-xs" v-model="name" />
-                        </div>
-                        <!-- <div>
-                            <label for="">Last Name</label>
-                            <input type="text" v-model="lastName">
-                        </div> -->
-                        <div>
-                            <label for="" class="collapse-title text-xl font-medium">Email : </label>
-
-                            <input type="email" placeholder="example@mail.kmutt.ac.th"
-                                class="input input-bordered input-secondary w-full max-w-xs" v-model="email" />
-
-                        </div>
-                        <div>
-                            <label for="" class="collapse-title text-xl font-medium ">Notes : </label>
-
-                            <textarea name="" id="" cols="30" rows="4" v-model="notes"
-                                class="textarea textarea-secondary " placeholder="Type something..."></textarea>
+                        <div class="alert alert-error shadow-lg w-72 text-[16px] self-center" v-show="falseInput">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Please fill the empty form</span>
+                            </div>
                         </div>
                         <div class="card-actions justify-center">
-
-                            <button @click="dolog"
-                                class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600">Book
+                            <button @click="createEvent"
+                                class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500 mb-4 text-lg">Book
                                 event</button>
                         </div>
                     </div>
@@ -148,5 +143,8 @@ onBeforeMount(async () => {
     </div>
 </template>
  
-<style>
+<style scoped>
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
 </style>
