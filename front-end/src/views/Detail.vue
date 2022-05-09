@@ -12,7 +12,7 @@ let { params } = useRoute();
 const bookingId = params.bookingId;
 
 const getDetailById = async () => {
-  const res = await fetch(`/api/events/${bookingId}`);
+  const res = await fetch(`/ssi3/api/events/${bookingId}`);
   selectedEvent.value = await res.json();
   getEventCategoryName.value =
     selectedEvent.value.eventCategoryID.eventCategoryName;

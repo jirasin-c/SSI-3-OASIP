@@ -8,7 +8,7 @@ const event = ref([]);
 const isEmpty = ref(false);
 
 const getEvent = async () => {
-  const res = await fetch("http://localhost:3000/api/events");
+  const res = await fetch("/ssi3/api/events");
   event.value = await res.json();
   event.value.filter((e) => {
     const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
@@ -34,7 +34,7 @@ const getDetail = (id) => {
 const cancelEvent = async (id) => {
   id.event.stopPropagation()
   if (confirm(`Are you sure to delete Event name: ${id.deleteName} ?`)) {
-    const res = await fetch(`api/events/${id.deleteId}`, {
+    const res = await fetch(`/ssi3/api/events/${id.deleteId}`, {
       method: 'DELETE'
     })
     if (res.status === 200) {
