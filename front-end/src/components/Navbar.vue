@@ -6,7 +6,7 @@
       <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
         <div class="avatar pr-2">
           <div class="w-[40px] rounded-full">
-            <img src="./img/logo.png" />
+            <img src="../assets/trimitr.png" />
           </div>
         </div>TRIMITR GROUP
       </router-link>
