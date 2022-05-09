@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from '@vue/reactivity';
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import MdiTrashCan from '../components/MdiTrashCan.vue';
 const eventCategory = ref([])
@@ -14,15 +14,17 @@ const notes = ref('')
 const duration = ref()
 const appRouter = useRouter()
 
-const createEvent = async () => {
-    const utc = new Date(startTime.value).toISOString()
-    startTime.value = utc
+onUpdated(() => {
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
             duration.value = findID.eventDuration
         }
     });
+})
+const createEvent = async () => {
+    const utc = new Date(startTime.value).toISOString()
+    startTime.value = utc
     if (name.value == '' || email.value == '' || startTime.value == null) {
         falseInput.value = true
     } else {
@@ -86,6 +88,14 @@ onBeforeMount(async () => {
                                     <option v-for="category in eventCategory " :key="category">
                                         {{ category.eventCategoryName }}</option>
                                 </select>
+                                <label for="duration" class="label">
+                                    <span class="label-text text-base font-semibold">
+                                        Duration:
+                                    </span>
+                                </label>
+                                <input type="text" :placeholder="duration"
+                                    class="input input-bordered input-secondary w-full max-w-xs " disabled
+                                    id="duration" />
                                 <label for="starttime" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Start time: <span class="text-red-500">*</span>
