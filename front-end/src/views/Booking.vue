@@ -26,7 +26,7 @@ const createEvent = async () => {
     if (name.value == '' || email.value == '' || startTime.value == null) {
         falseInput.value = true
     } else {
-        const res = await fetch('/api/events', {
+        const res = await fetch('/ssi3/api/events', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -51,7 +51,7 @@ const createEvent = async () => {
     }
 }
 const getEventCategory = async () => {
-    const res = await fetch("/api/event-category")
+    const res = await fetch("/ssi3/api/event-category")
     eventCategory.value = await res.json()
     console.log(eventCategory.value);
 }
