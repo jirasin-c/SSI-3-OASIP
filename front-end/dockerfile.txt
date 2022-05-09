@@ -3,6 +3,7 @@ FROM node:lts-alpine AS build
 WORKDIR /front-end
 COPY package*.json ./
 RUN npm install
+RUN npm i daisyui
 COPY . .
 # RUN npm ci
 RUN ls
