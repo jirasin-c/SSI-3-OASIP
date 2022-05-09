@@ -77,4 +77,21 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
+::-webkit-scrollbar {
+  width: 16px;
+
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(180deg, #D0368A 0%, #708AD4 99%);
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: 100px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
 </style>
