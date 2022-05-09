@@ -1,0 +1,38 @@
+services:
+  databasescon:
+    image: database
+    ports:
+     - "3306:3306"
+    volumes:
+     - ./src:/docker-entrypoint-inidb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=trimitr56
+    restart: on-failure
+  backendcon:
+    build: ../BACKEND/
+    image: backend
+    ports:
+      - "8080:8080"
+    links:
+      - databasescon
+    restart: on-failure
+    environment:
+      - MYSQL_PATH=databasescon
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=oasip
+  frontend:
+    image: img_frontend
+    build: ../front-end
+    restart: unless-stopped
+    volumes:
+      - ./front-end/:/var/local/app:cached
+  proxy_nginx_frontend:
+    image: nginx:1.19.1
+    volumes:
+      - ../front-end/config/nginx/dev.conf:/etc/nginx/conf.d/default.conf:cached
+      - ../front-end/logs/nginx:/var/log/nginx:cached
+    container_name: proxy_nginx_frontend
+    ports:
+      - 8000:80
+    depends_on:
+      - frontend
