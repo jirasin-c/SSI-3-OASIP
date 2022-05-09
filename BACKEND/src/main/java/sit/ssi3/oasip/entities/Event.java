@@ -3,6 +3,7 @@ package sit.ssi3.oasip.entities;
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Table(name = "event", indexes = {
         @Index(name = "fk_Event_EventCategory_idx", columnList = "eventCategoryID")
@@ -22,7 +23,7 @@ public class Event {
     private String bookingEmail;
 
     @Column(name = "eventStartTime", nullable = false)
-    private Instant eventStartTime;
+    private Date eventStartTime;
 
     @Column(name = "eventDuration", nullable = false)
     private Integer eventDuration;
@@ -50,7 +51,7 @@ public class Event {
         this.eventNotes = eventNotes;
     }
 
-    public Instant getEventStartTime() {
+    public Date getEventStartTime() {
         return eventStartTime;
     }
 
@@ -60,7 +61,7 @@ public class Event {
     public Integer getEventDuration(){
         return  eventDuration;
     }
-    public void setEventStartTime(Instant eventStartTime) {
+    public void setEventStartTime(Date eventStartTime) {
         this.eventStartTime = eventStartTime;
     }
 
