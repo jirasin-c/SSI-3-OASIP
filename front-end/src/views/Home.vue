@@ -65,9 +65,12 @@ onBeforeMount(async () => {
           <p class="text-2xl text-gray-400">List currently empty</p>
         </div>
 
-        <div class="columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1">
-          <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent" />
+        <!-- <div class=" columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1"> -->
+        <div class=" w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10">
+          <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent"
+            class=" grid grid-cols-3 gap-6 " />
         </div>
+
       </div>
     </div>
   </div>
