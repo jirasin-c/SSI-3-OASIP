@@ -1,6 +1,7 @@
 <script setup>
 import MdiTrashCan from "./MdiTrashCan.vue";
 import { ref } from "vue";
+import RiDeleteBin6Line from "./RiDeleteBin6Line.vue";
 const prop = defineProps({
   allBooking: {
     type: Array,
@@ -8,16 +9,17 @@ const prop = defineProps({
   },
 });
 
-defineEmits(["viewDetail"]);
+defineEmits(["viewDetail", "deleteEvent"]);
 </script>
 
 <template>
   <div>
     <div v-for="booking in allBooking" :key="booking.id">
-      <router-link :to="{ name: 'Detail', params: { bookingId: booking.id } }">
+      <!-- <router-link :to="{ name: 'Detail', params: { bookingId: booking.id } }"> -->
+      <div @click="$emit('viewDetail', { bookingId: booking.id, event: $event })" class="cursor">
         <div
-          class="cursor hover:bg-zinc-200 transition duration-300 grid break-inside-avoid rounded-xl p-4 mb-8 w-full break-words drop-shadow-md text-ellipsis overflow-hidden bg-gradient-to-r from-white to-gray-200 text-slate-500">
-          <div class="badge badge-outline">
+          class="hover:bg-slate-500 hover:text-white grid break-inside-avoid rounded-xl p-4 mb-8 w-full break-words drop-shadow-md text-ellipsis overflow-hidden bg-gray-200 text-slate-500">
+          <div class="badge badge badge-accent badge-outline mb-1">
             {{ booking.eventCategoryID.eventCategoryName }}
           </div>
           <div class="flex flex-row">
@@ -28,10 +30,18 @@ defineEmits(["viewDetail"]);
               <br />
               Date: {{ booking.eventStartTime }}<br />
               Duration: {{ booking.eventDuration }} mins.<br />
+
             </div>
           </div>
+          <div class="justify-self-end flex bg-slate-100 hover:bg-slate-600 rounded-full w-14 h-14 ">
+            <button
+              @click="$emit('deleteEvent', { deleteId: booking.id, deleteName: booking.bookingName, event: $event })">
+              <RiDeleteBin6Line class=" mx-3" />
+            </button>
+          </div>
         </div>
-      </router-link>
+      </div>
+      <!-- </router-link> -->
     </div>
   </div>
 </template>
