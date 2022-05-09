@@ -29,6 +29,8 @@ services:
     volumes:
       - ../front-end/:/var/local/app:cached
     container_name: frontendcon
+    ports:
+      - "3000:80"
   proxy_nginx_frontend:
     image: nginx:1.19.1
     volumes:
@@ -36,6 +38,6 @@ services:
       - ./front-end/logs/nginx:/var/log/nginx:cached
     container_name: proxy_nginx_frontend
     ports:
-      - 8000:80
+      - "80:80"
     depends_on:
       - frontendcon
