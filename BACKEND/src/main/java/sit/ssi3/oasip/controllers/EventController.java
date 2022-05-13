@@ -35,4 +35,11 @@ public class EventController {
         eventService.cancelEvent(eventID);
     }
 
+    @PutMapping("/{id}")
+    public Event updateEvent(@RequestBody Event updateEvent, @PathVariable Integer id){
+        return eventService.updateEvent(updateEvent,id);
+
+    }
+
+
 }

@@ -35,4 +35,22 @@ public class EventService {
                 HttpStatus.NOT_FOUND,"Event ID " + eventID + " Does Not Exits!!!"));
         eventRepository.deleteById(eventID);
     }
+
+    public Event updateEvent(Event updateEvent,Integer id){
+        Event event = eventRepository.findById(id).map(o->mapEvent(o,updateEvent))
+                .orElseGet(()->
+                {
+                    updateEvent.setId(id);
+                    return updateEvent;
+                });
+        return eventRepository.saveAndFlush(event);
+    }
+
+    private Event mapEvent(Event existingEvent, Event updateEvent) {
+        existingEvent.setEventNotes(updateEvent.getEventNotes());
+        existingEvent.setEventStartTime(updateEvent.getEventStartTime());
+        return existingEvent;
+    }
+
+
 }
