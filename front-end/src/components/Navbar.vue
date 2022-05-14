@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div class="fixed w-screen">
+  <div class="w-screen">
     <div class="navbar bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-primary-content">
       <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
         <div class="avatar pr-2">
