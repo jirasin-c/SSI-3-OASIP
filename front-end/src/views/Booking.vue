@@ -77,31 +77,31 @@ const createEvent = async () => {
         }else{
             if (email.value.match(validRegex)) {
                 // console.log(startTime.value);
-                // const utc = new Date(startTime.value).toISOString()
-                // startTime.value = utc
-                // // console.log("name: "+name.value+"email: "+email.value+"start time: "+startTime.value+"duration: "+duration.value+"notes: "+notes.value);
-                // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'content-type': 'application/json'
-                //     },
-                //     body: JSON.stringify({
-                //         bookingName: name.value,
-                //         bookingEmail: email.value,
-                //         eventStartTime: startTime.value,
-                //         eventDuration: duration.value,
-                //         eventNotes: notes.value,
-                //         eventCategoryID: {
-                //             id: categoryID.value,
-                //         }
-                //     })
-                // })
-                // if (res.status === 201) {
+                const utc = new Date(startTime.value).toISOString()
+                startTime.value = utc
+                // console.log("name: "+name.value+"email: "+email.value+"start time: "+startTime.value+"duration: "+duration.value+"notes: "+notes.value);
+                const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bookingName: name.value,
+                        bookingEmail: email.value,
+                        eventStartTime: startTime.value,
+                        eventDuration: duration.value,
+                        eventNotes: notes.value,
+                        eventCategoryID: {
+                            id: categoryID.value,
+                        }
+                    })
+                })
+                if (res.status === 201) {
                     alert("Event created successfully")
-                //     appRouter.push({ name: 'Home' })
-                // } else {
-                //     alert("Event can't created")
-                // }     
+                    appRouter.push({ name: 'Home' })
+                } else {
+                    alert("Event can't created")
+                }     
             }else{
                 alert("Invalid email address!");
                 return
