@@ -14,57 +14,108 @@ const notes = ref('')
 const duration = ref()
 const appRouter = useRouter()
 const currentTime = ref(null)
+const isPast = ref(false)
 
 onUpdated(() => {
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
             duration.value = findID.eventDuration
         }
     });
+        // startTime.value = null
+        // console.log("name: "+name.value+" email: "+email.value+" start time: "+startTime.value+" duration: "+duration.value+" notes: "+notes.value);
+    //  compareDate(startTime.value,currentTime.value)
 })
+// const validationEmail = () =>{
+//     const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+//   if (email.value.match(validRegex)) {
+//     return true;
+//   } else {
+//       alert("Invalid email address!");
+//     return false;
+// }
+// }
+
+const compareDate = (startTime,currentTime)=>{
+    if (startTime>currentTime) {
+        isPast.value = false
+        // console.log('in future');
+        return false
+    }else if(startTime<currentTime){
+        isPast.value = true
+        // console.log('in past');
+        return true
+    }else{
+        isPast.value = false
+        // console.log('equals');
+        return false
+    }
+
+}
 const createEvent = async () => {
-    // console.log(startTime.value);
-    if (name.value == '' || email.value == '' || startTime.value == null) {
+    if (isPast.value == true) {
+            startTime.value = startTime.value
+            alert("Start time must be in the future")
+        }  
+    // const validRegex = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    if (name.value == '' || email.value == '' || startTime.value == null ) {
         // console.log(startTime.value);
         startTime.value = startTime.value
         // console.log(startTime.value);
-        falseInput.value = true
+        falseInput.value = true 
+        return
         // startTime.value = null
         // console.log("name: "+name.value+" email: "+email.value+" start time: "+startTime.value+" duration: "+duration.value+" notes: "+notes.value);
-    } else {
-        if (name.value.length>100 || notes.value.length>500) {
+    }
+    // if (email.value.match(validRegex)) {
+        if (name.value.length>100 || notes.value.length>500 ) {
             startTime.value = startTime.value
             alert("Field longer string can't be event")
         }else{
-            // console.log(startTime.value);
-            const utc = new Date(startTime.value).toISOString()
-            startTime.value = utc
-            // console.log("name: "+name.value+"email: "+email.value+"start time: "+startTime.value+"duration: "+duration.value+"notes: "+notes.value);
-            // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'content-type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         bookingName: name.value,
-            //         bookingEmail: email.value,
-            //         eventStartTime: startTime.value,
-            //         eventDuration: duration.value,
-            //         eventNotes: notes.value,
-            //         eventCategoryID: {
-            //             id: categoryID.value,
-            //         }
-            //     })
-            // })
-            // if (res.status === 201) {
-            //     alert("Event created successfully")
-            //     appRouter.push({ name: 'Home' })
-            // } else {
-            //     alert("Event can't created")
-            // }
+            if (email.value.match(validRegex)) {
+                // console.log(startTime.value);
+                // const utc = new Date(startTime.value).toISOString()
+                // startTime.value = utc
+                // // console.log("name: "+name.value+"email: "+email.value+"start time: "+startTime.value+"duration: "+duration.value+"notes: "+notes.value);
+                // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                //     method: 'POST',
+                //     headers: {
+                //         'content-type': 'application/json'
+                //     },
+                //     body: JSON.stringify({
+                //         bookingName: name.value,
+                //         bookingEmail: email.value,
+                //         eventStartTime: startTime.value,
+                //         eventDuration: duration.value,
+                //         eventNotes: notes.value,
+                //         eventCategoryID: {
+                //             id: categoryID.value,
+                //         }
+                //     })
+                // })
+                // if (res.status === 201) {
+                    alert("Event created successfully")
+                //     appRouter.push({ name: 'Home' })
+                // } else {
+                //     alert("Event can't created")
+                // }     
+            }else{
+                alert("Invalid email address!");
+                return
+            }
         }
-    }
+    //     } else {
+    //         alert("Invalid email address!");
+    //     return
+    // }
+    // compareDate(startTime.value,currentTime.value)
+    // console.log(new Date(startTime.value).getTime() );
+    // console.log(new Date(currentTime.value).getTime() );
+    // console.log(startTime.value);
+    // validationEmail()
 }
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
@@ -73,8 +124,9 @@ const getEventCategory = async () => {
 onBeforeMount(async () => {
     await getEventCategory()
     // console.log(new Date().toISOString())
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)+':00'
-    console.log(currentTime.value);
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+    // console.log(currentTime.value);
+    // console.log(startTime.value);    
 })
 
 
@@ -117,9 +169,10 @@ onBeforeMount(async () => {
                                         Start time: <span class="text-red-500">*</span>
                                     </span>
                                 </label>
+                                    <span class="text-sm text-red-500 pb-2" v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
                                 <input type="datetime-local" placeholder="Type here"
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg"
-                                    v-model="startTime" id="starttime" :min="currentTime" />
+                                    v-model="startTime" id="starttime" :min="currentTime">
                                 <label for="name" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Name : <span class="text-red-500">*</span>

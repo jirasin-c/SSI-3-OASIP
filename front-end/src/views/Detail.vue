@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount , onUpdated} from "vue";
 import IcPerson from "../icons/IcBaselinePerson.vue";
 import IcEmail from "../icons/IcBaselineEmail.vue";
 import IcTimer from "../icons/IcBaselineTimer.vue";
@@ -14,7 +14,28 @@ const editDate = ref(null)
 const editNote = ref(null)
 const isEdit = ref(false)
 const currentTime = ref(null)
+const isPast =ref(false)
 
+const compareDate = (editDate,currentTime)=>{
+    if (editDate>currentTime) {
+        isPast.value = false
+        // console.log('in future');
+        return false
+    }else if(editDate<currentTime){
+        isPast.value = true
+        // console.log('in past');
+        return true
+    }else{
+        isPast.value = false
+        // console.log('equals');
+        return false
+    }
+
+}
+
+onUpdated(() => {
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+})
 const getDetailById = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`);
   selectedEvent.value = await res.json();
@@ -51,6 +72,11 @@ const getDetailById = async () => {
 
 const updateEvent = async () => {
   console.log(editDate.value);
+  if (isPast.value == true) {
+            editDate.value = editDate.value
+            alert("Start time must be in the future")
+            return
+        }  
   if (confirm(`Are you sure to update the booking information ?`)) {
     // const utc = new Date(editDate.value).toISOString()
     //     editDate.value = utc
@@ -141,12 +167,13 @@ window.onbeforeunload = function () {
             <p>
               <IcCalendar class="inline-block mr-5" />
               <label for="starttime">
-                Start time:
+                Start time  :
               </label>
             <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventStartTime }}</p>
             <!-- <span class="text-red-500 mr-2" v-show="isEdit" >*</span> -->
             <input v-show="isEdit" type="datetime-local"
               class="input input-bordered input-secondary w-full max-w-xs text-lg" id="starttime" v-model="editDate" :min="currentTime"/>
+            <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">Start time must be in the future.</span>
             </p>
           </div>
           <div class="card-actions justify-end m-5">
