@@ -1,6 +1,7 @@
 package sit.ssi3.oasip.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -15,19 +16,26 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
-    @Column(name = "bookingName", nullable = false, length = 100)
+    @NotEmpty(message = "Name must not be blank")
+    @Size(max = 100,message = "Name size must be between 0 and 100")
+    @Column(name = "bookingName", nullable = false)
     private String bookingName;
 
+    @Email(message = "Email must be well-formed email address" , regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+    @NotEmpty(message = "Email must not be blank")
+    @Size(max = 255,message = "Email size must be between 0 and 255")
     @Column(name = "bookingEmail", nullable = false)
     private String bookingEmail;
 
+    @Future(message = "Start time must be a future date/time")
     @Column(name = "eventStartTime", nullable = false)
     private Date eventStartTime;
 
     @Column(name = "eventDuration", nullable = false)
     private Integer eventDuration;
 
+
+    @Size(max = 500,message = "Notes size must be between 0 and 500")
     @Column(name = "eventNotes", length = 500)
     private String eventNotes;
 
@@ -55,12 +63,14 @@ public class Event {
         return eventStartTime;
     }
 
-    public void setEventDuration(Integer eventDuration){
+    public void setEventDuration(Integer eventDuration) {
         this.eventDuration = eventDuration;
     }
-    public Integer getEventDuration(){
-        return  eventDuration;
+
+    public Integer getEventDuration() {
+        return eventDuration;
     }
+
     public void setEventStartTime(Date eventStartTime) {
         this.eventStartTime = eventStartTime;
     }
@@ -88,5 +98,7 @@ public class Event {
     public void setId(Integer id) {
         this.id = id;
     }
+
+
 }
 

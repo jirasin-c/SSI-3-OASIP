@@ -2,10 +2,12 @@ package sit.ssi3.oasip.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.services.EventService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,9 +27,10 @@ public class EventController {
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Event createEvent(@RequestBody Event newEvent){
-        return eventService.createEvent(newEvent);
+//    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event newEvent){
+        Event newEventSaved = eventService.createEvent(newEvent);
+        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventID}")
