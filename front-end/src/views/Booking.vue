@@ -4,6 +4,7 @@ import { ref, onBeforeMount, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import MdiTrashCan from '../components/MdiTrashCan.vue';
 const eventCategory = ref([])
+const events = ref([])
 const selectedCategory = ref('Project Management Clinic')
 const startTime = ref(null)
 const name = ref('')
@@ -15,71 +16,79 @@ const duration = ref()
 const appRouter = useRouter()
 const currentTime = ref(null)
 const isPast = ref(false)
-
+const isOverlapped = ref(false)
 onUpdated(() => {
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2) 
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
             duration.value = findID.eventDuration
         }
     });
-        // startTime.value = null
-        // console.log("name: "+name.value+" email: "+email.value+" start time: "+startTime.value+" duration: "+duration.value+" notes: "+notes.value);
-    //  compareDate(startTime.value,currentTime.value)
 })
-// const validationEmail = () =>{
-//     const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-//   if (email.value.match(validRegex)) {
-//     return true;
-//   } else {
-//       alert("Invalid email address!");
-//     return false;
-// }
-// }
+onBeforeMount(async () => {
+    await getEventCategory()
+    await getEvents()
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+})
 
 const compareDate = (startTime,currentTime)=>{
     if (startTime>currentTime) {
         isPast.value = false
-        // console.log('in future');
         return false
     }else if(startTime<currentTime){
         isPast.value = true
-        // console.log('in past');
         return true
     }else{
         isPast.value = false
-        // console.log('equals');
         return false
     }
 
 }
 const createEvent = async () => {
+    isOverlapped.value = false
+    const compareStartTime = new Date(startTime.value).toLocaleString()
+    const compareStartTimeISO = new Date(startTime.value)
+
+    events.value.filter((findOvl)=>{
+    const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
+    const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
+    const durationToMillisec = duration.value* 60000
+    const existDuration = findOvl.eventDuration * 60000
+    const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
+    const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
+    const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
+    const startTimePlusDuration = startTimeToMillisec + durationToMillisec
+    const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
+       if ((findOvl.eventCategoryID.id === categoryID.value)) {
+           if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+           isOverlapped.value = true
+           alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+           }
+       }
+    })
+    if (isOverlapped.value == true) {
+        return
+    }
     if (isPast.value == true) {
             startTime.value = startTime.value
-            alert("Start time must be in the future")
-        }  
-    // const validRegex = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            alert("Start time is in the past, Please select new date")
+        return
+    }  
+
     const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if (name.value == '' || email.value == '' || startTime.value == null ) {
-        // console.log(startTime.value);
         startTime.value = startTime.value
-        // console.log(startTime.value);
         falseInput.value = true 
-        return
-        // startTime.value = null
-        // console.log("name: "+name.value+" email: "+email.value+" start time: "+startTime.value+" duration: "+duration.value+" notes: "+notes.value);
+        return 
     }
-    // if (email.value.match(validRegex)) {
         if (name.value.length>100 || notes.value.length>500 ) {
             startTime.value = startTime.value
             alert("Field longer string can't be event")
         }else{
             if (email.value.match(validRegex)) {
-                // console.log(startTime.value);
                 const utc = new Date(startTime.value).toISOString()
                 startTime.value = utc
-                // console.log("name: "+name.value+"email: "+email.value+"start time: "+startTime.value+"duration: "+duration.value+"notes: "+notes.value);
                 const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
                     method: 'POST',
                     headers: {
@@ -107,28 +116,17 @@ const createEvent = async () => {
                 return
             }
         }
-    //     } else {
-    //         alert("Invalid email address!");
-    //     return
-    // }
-    // compareDate(startTime.value,currentTime.value)
-    // console.log(new Date(startTime.value).getTime() );
-    // console.log(new Date(currentTime.value).getTime() );
-    // console.log(startTime.value);
-    // validationEmail()
 }
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
     eventCategory.value = await res.json()
+    console.log(eventCategory.value);
 }
-onBeforeMount(async () => {
-    await getEventCategory()
-    // console.log(new Date().toISOString())
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
-    // console.log(currentTime.value);
-    // console.log(startTime.value);    
-})
-
+const getEvents = async () =>{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+    events.value = await res.json()
+    console.log(events.value);
+} 
 
 </script>
  
