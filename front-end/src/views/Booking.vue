@@ -4,6 +4,7 @@ import { ref, onBeforeMount, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import MdiTrashCan from '../components/MdiTrashCan.vue';
 const eventCategory = ref([])
+const events = ref([])
 const selectedCategory = ref('Project Management Clinic')
 const startTime = ref(null)
 const name = ref('')
@@ -13,8 +14,11 @@ const email = ref('')
 const notes = ref('')
 const duration = ref()
 const appRouter = useRouter()
-
+const currentTime = ref(null)
+const isPast = ref(false)
+const isOverlapped = ref(false)
 onUpdated(() => {
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2) 
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
@@ -22,45 +26,107 @@ onUpdated(() => {
         }
     });
 })
-const createEvent = async () => {
-    const utc = new Date(startTime.value).toISOString()
-    startTime.value = utc
-    if (name.value == '' || email.value == '' || startTime.value == null) {
-        falseInput.value = true
-    } else {
-        const res = await fetch(`${import.meta.env.BASE_URL}api/events`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                bookingName: name.value,
-                bookingEmail: email.value,
-                eventStartTime: startTime.value,
-                eventDuration: duration.value,
-                eventNotes: notes.value,
-                eventCategoryID: {
-                    id: categoryID.value,
-                }
-            })
-        })
-        if (res.status === 201) {
-            console.log('created');
-            appRouter.push({ name: 'Home' })
-        } else {
-            console.log('can not create');
-        }
+onBeforeMount(async () => {
+    await getEventCategory()
+    await getEvents()
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+})
+
+const compareDate = (startTime,currentTime)=>{
+    if (startTime>currentTime) {
+        isPast.value = false
+        return false
+    }else if(startTime<currentTime){
+        isPast.value = true
+        return true
+    }else{
+        isPast.value = false
+        return false
     }
+
+}
+const createEvent = async () => {
+    isOverlapped.value = false
+    const compareStartTime = new Date(startTime.value).toLocaleString()
+    const compareStartTimeISO = new Date(startTime.value)
+
+    events.value.filter((findOvl)=>{
+    const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
+    const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
+    const durationToMillisec = duration.value* 60000
+    const existDuration = findOvl.eventDuration * 60000
+    const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
+    const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
+    const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
+    const startTimePlusDuration = startTimeToMillisec + durationToMillisec
+    const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
+       if ((findOvl.eventCategoryID.id === categoryID.value)) {
+           if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+           isOverlapped.value = true
+           alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+           }
+       }
+    })
+    if (isOverlapped.value == true) {
+        return
+    }
+    if (isPast.value == true) {
+            startTime.value = startTime.value
+            alert("Start time is in the past, Please select new date")
+        return
+    }  
+
+    const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    if (name.value == '' || email.value == '' || startTime.value == null ) {
+        startTime.value = startTime.value
+        falseInput.value = true 
+        return 
+    }
+        if (name.value.length>100 || notes.value.length>500 ) {
+            startTime.value = startTime.value
+            alert("Field longer string can't be event")
+        }else{
+            if (email.value.match(validRegex)) {
+                const utc = new Date(startTime.value).toISOString()
+                startTime.value = utc
+                const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bookingName: name.value,
+                        bookingEmail: email.value,
+                        eventStartTime: startTime.value,
+                        eventDuration: duration.value,
+                        eventNotes: notes.value,
+                        eventCategoryID: {
+                            id: categoryID.value,
+                        }
+                    })
+                })
+                if (res.status === 201) {
+                    alert("Event created successfully")
+                    appRouter.push({ name: 'Home' })
+                } else {
+                    alert("Event can't created")
+                }     
+            }else{
+                alert("Invalid email address!");
+                return
+            }
+        }
 }
 const getEventCategory = async () => {
-    const res = await fetch(`${import.meta.env.BASE_URL}api/event-category`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
     eventCategory.value = await res.json()
     console.log(eventCategory.value);
 }
-onBeforeMount(async () => {
-    await getEventCategory()
-})
-
+const getEvents = async () =>{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+    events.value = await res.json()
+    console.log(events.value);
+} 
 
 </script>
  
@@ -69,14 +135,14 @@ onBeforeMount(async () => {
         <div class="hero min-h-screen bg-base-200">
             <div class="hero-content text-left ">
                 <div
-                    class="card w-[1000px] bg-gradient-to-r from-base-100 to-base-200 mb-16 shadow-xl backdrop-blur-sm">
-                    <div class="card-body text-3xl place-self-center">
+                    class="card w-auto lg:w-[1000px] bg-gradient-to-r from-base-100 to-base-200 mb-16 shadow-xl backdrop-blur-sm">
+                    <div class="card-body text-3xl place-self-center pb-1">
                         <p
-                            class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 pb-2 text-center">
+                            class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 pb-1 text-center">
                             Booking Event
                         </p>
                         <div class="divider"></div>
-                        <div class="flex justify-center pb-5">
+                        <div class="flex justify-center pb-2">
                             <div class="form-control w-full max-w-xs">
                                 <label for="category" class="label">
                                     <span class="label-text text-base font-semibold">
@@ -101,17 +167,19 @@ onBeforeMount(async () => {
                                         Start time: <span class="text-red-500">*</span>
                                     </span>
                                 </label>
+                                    <span class="text-sm text-red-500 pb-2" v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
                                 <input type="datetime-local" placeholder="Type here"
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg"
-                                    v-model="startTime" id="starttime" />
+                                    v-model="startTime" id="starttime" :min="currentTime">
                                 <label for="name" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
+                                <span class="text-sm text-red-500 pb-2" v-show="name.length>100">Name length must be less than 100 character.</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
-                                    id="name" />
+                                    id="name" maxlength="101"/>
                                 <label for="email" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Email : <span class="text-red-500">*</span>
@@ -125,12 +193,13 @@ onBeforeMount(async () => {
                                         Notes :
                                     </span>
                                 </label>
-                                <textarea id="notes" cols="30" rows="3" v-model="notes"
+                                <span class="text-sm text-red-500 pb-2" v-show="notes.length>500" >Notes length must be less than 500 character.</span>
+                                <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
-                                    placeholder="Type something..."></textarea>
+                                    placeholder="Type something..." maxlength="501"></textarea>
                             </div>
                         </div>
-                        <div class="alert alert-error shadow-lg w-72 text-[16px] self-center" v-show="falseInput">
+                        <div class="alert alert-error shadow-lg w-72 h-12 text-[16px] text-white self-center" v-show="falseInput">
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
                                     fill="none" viewBox="0 0 24 24">

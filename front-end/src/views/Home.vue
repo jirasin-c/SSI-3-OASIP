@@ -8,7 +8,7 @@ const event = ref([]);
 const isEmpty = ref(false);
 
 const getEvent = async () => {
-  const res = await fetch(`${import.meta.env.BASE_URL}api/events`);
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`);
   event.value = await res.json();
   event.value.filter((e) => {
     const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
@@ -34,15 +34,13 @@ const getDetail = (id) => {
 const cancelEvent = async (id) => {
   id.event.stopPropagation()
   if (confirm(`Are you sure to delete Event name: ${id.deleteName} ?`)) {
-    const res = await fetch(`${import.meta.env.BASE_URL}api/events/${id.deleteId}`, {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${id.deleteId}`, {
       method: 'DELETE'
     })
     if (res.status === 200) {
-      // console.log(`find ${deleteStoryId}`);
       event.value = event.value.filter((e) => e.id !== id.deleteId)
-      console.log('deleted');
     } else {
-      console.log('not delete');
+      alert("Can't deleted")
     }
   }
 
@@ -66,11 +64,10 @@ onBeforeMount(async () => {
         </div>
 
         <!-- <div class=" columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1"> -->
-        <div class=" w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10">
+        <div class=" w-[800px] text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
           <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent"
             class=" grid grid-cols-3 gap-6 " />
         </div>
-
       </div>
     </div>
   </div>
