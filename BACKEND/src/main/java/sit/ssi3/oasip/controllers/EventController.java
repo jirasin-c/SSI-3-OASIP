@@ -29,13 +29,10 @@ public class EventController {
     }
 
     @PostMapping("")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event newEvent) {
-    public Boolean createEvent(@RequestBody Event newEvent) {
-//        Event newEventSaved = eventService.createEvent(newEvent);
-        Boolean newEventSaved = eventService.createEvent(newEvent);
-//        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
-        return newEventSaved;
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody CreateEventRequest newEvent) {
+        Event newEventSaved = eventService.createEvent(newEvent);
+        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventID}")

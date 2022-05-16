@@ -1,5 +1,6 @@
 package sit.ssi3.oasip.services;
 
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Sort;
@@ -18,23 +19,25 @@ import sit.ssi3.oasip.repositories.EventCategoryRepository;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.request.CreateEventRequest;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.validation.constraints.AssertTrue;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
-//    @Autowired
-//    private ValidationHandler validationHandler;
-
-//    @Autowired
-//    private EventCategoryRepository eventCategoryRepository;
+    @Autowired
+    private static final Validator validator =
+            Validation.byDefaultProvider()
+                    .configure()
+                    .messageInterpolator(new ParameterMessageInterpolator())
+                    .buildValidatorFactory()
+                    .getValidator();
 
     public List<Event> getEvent(String sortBy) {
         return eventRepository.findAll(Sort.by(sortBy).descending());
@@ -48,44 +51,45 @@ public class EventService {
         );
     }
 
-    @AssertTrue(message = "overlapped")
-    public boolean createEvent(Event newEvent) {
-//        return eventRepository.saveAndFlush(newEvent)
-
+    public Event createEvent(CreateEventRequest newEvent) {
+        // find all event
         List<Event> eventList = this.eventRepository.findAll();
+        // check event overlapped
         eventList = eventList.stream().filter(event -> {
             Date startTime = event.getEventStartTime();
             Date newEventStartTime = newEvent.getEventStartTime();
             Date endTime = new Date((startTime.getTime() + (event.getEventDuration() * 60000)));
             Date newEventEndTime = new Date((newEventStartTime.getTime() + (newEvent.getEventDuration() * 60000)));
-            if (newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) > 0) {
-                return true;
-            }
-            if (newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) < 0) {
-                return true;
-            }
-            if (newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) < 0) {
-                return true;
-            }
-
-            if (newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) > 0) {
+            if (newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) > 0 ||
+                    newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) < 0 ||
+                    newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) < 0 ||
+                    newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) > 0) {
                 return true;
             }
             return false;
-
         }).collect(Collectors.toList());
-        newEvent.setOverlapped(false);
+        // map event dto request to event
+        Event event = new Event();
+        event.setId(null);
+        event.setBookingName(newEvent.getBookingName());
+        event.setEventDuration(newEvent.getEventDuration());
+        event.setEventNotes(newEvent.getEventNotes());
+        event.setBookingEmail(newEvent.getBookingEmail());
+        event.setEventCategoryID(newEvent.getEventCategoryID());
+        event.setEventStartTime(newEvent.getEventStartTime());
+        event.setOverlapped(false);
+        // check overlapped
         if (eventList.size() > 0) {
-//            newEvent.setOverlapped(true);
+            event.setOverlapped(true);
         }
-    this.validateEvent(newEvent);
-//            this.eventRepository.saveAndFlush(newEvent);
-//        this.eventRepository.saveAndFlush(newEvent);
-        return false;
-    }
-
-    private Event validateEvent(@Valid Event newEvent) {
-        return this.eventRepository.saveAndFlush(newEvent);
+        // validate event field
+        Set<ConstraintViolation<Event>> violations = validator.validate(event);
+        for (ConstraintViolation<Event> violation : violations) {
+            System.out.println(violation.getMessage());
+        }
+        // return when error message contains
+        if (violations.size() > 0) return null; // custom error response
+        return this.eventRepository.saveAndFlush(event); // return success service
     }
 
 
