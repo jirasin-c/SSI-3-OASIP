@@ -3,9 +3,11 @@ package sit.ssi3.oasip.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.services.EventService;
+import sit.ssi3.request.CreateEventRequest;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,9 +30,12 @@ public class EventController {
 
     @PostMapping("")
 //    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event newEvent){
-        Event newEventSaved = eventService.createEvent(newEvent);
-        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
+//    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event newEvent) {
+    public Boolean createEvent(@RequestBody Event newEvent) {
+//        Event newEventSaved = eventService.createEvent(newEvent);
+        Boolean newEventSaved = eventService.createEvent(newEvent);
+//        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
+        return newEventSaved;
     }
 
     @DeleteMapping("/{eventID}")
