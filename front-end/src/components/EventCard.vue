@@ -33,10 +33,10 @@ defineEmits(["viewDetail", "deleteEvent"]);
 
             </div>
           </div>
-          <div class="justify-self-end flex bg-slate-100 hover:bg-slate-600 rounded-full w-14 h-14 ">
+          <div class="justify-self-end flex bg-slate-100 hover:bg-slate-600 rounded-full  w-9 h-9 lg:w-auto lg:h-14">
             <button
               @click="$emit('deleteEvent', { deleteId: booking.id, deleteName: booking.bookingName, event: $event })">
-              <RiDeleteBin6Line class=" mx-3" />
+              <RiDeleteBin6Line class=" mx-2 lg:mx-3" />
             </button>
           </div>
         </div>

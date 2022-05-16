@@ -17,6 +17,7 @@ const appRouter = useRouter()
 const currentTime = ref(null)
 const isPast = ref(false)
 const isOverlapped = ref(false)
+const isNotEmail = ref(false)
 onUpdated(() => {
     currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2) 
     eventCategory.value.filter((findID) => {
@@ -45,6 +46,19 @@ const compareDate = (startTime,currentTime)=>{
     }
 
 }
+
+const validateEmail = () =>{
+    const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            if (email.value.match(validRegex) && email.value.length > 0) {
+                isNotEmail.value = false
+            }else if (email.value.length == 0) {
+                isNotEmail.value = true
+                return false
+            }else{
+                return true
+            }
+}
+
 const createEvent = async () => {
     isOverlapped.value = false
     const compareStartTime = new Date(startTime.value).toLocaleString()
@@ -61,7 +75,12 @@ const createEvent = async () => {
     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
        if ((findOvl.eventCategoryID.id === categoryID.value)) {
-           if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+           console.log(existingEndTime);
+        //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+            if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+            // if(((compareStartTime<existingEndTime)&&(compareEndTime>=existingEndTime)) && ((compareStartTime>=existingStartTime) && (compareEndTime>=existingStartTime))) {
+        //    if((existingStartTime<compareStartTime&&compareStartTime<existingEndTime)||(existingStartTime<compareEndTime&&compareEndTime<existingEndTime))  {
+            //    console.log(compareEndTime);
            isOverlapped.value = true
            alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
            }
@@ -76,17 +95,16 @@ const createEvent = async () => {
         return
     }  
 
-    const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if (name.value == '' || email.value == '' || startTime.value == null ) {
         startTime.value = startTime.value
         falseInput.value = true 
         return 
     }
-        if (name.value.length>100 || notes.value.length>500 ) {
+        if (name.value.length==100 || notes.value.length==500 ) {
             startTime.value = startTime.value
-            alert("Field longer string can't be event")
+            alert("Field longer string can't be event.")
         }else{
-            if (email.value.match(validRegex)) {
+            if (isNotEmail.value == false) {
                 const utc = new Date(startTime.value).toISOString()
                 startTime.value = utc
                 const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
@@ -176,15 +194,20 @@ const getEvents = async () =>{
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-red-500 pb-2" v-show="name.length>100">Name length must be less than 100 character.</span>
+                                <span class="text-sm text-red-500 pb-2" v-show="name.length==100">A name must be 1 - 100 characters.</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
-                                    id="name" maxlength="101"/>
+                                    id="name" maxlength="100"/>
+                                <label class="label">
+                                    <span class="label-text-alt"></span>
+                                    <span class="label-text-alt">{{name.length}}/100</span>
+                                </label>
                                 <label for="email" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Email : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
+                                <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email address.</span>
                                 <input type="email" placeholder="example@mail.kmutt.ac.th"
                                     class="input input-bordered input-secondary w-full max-w-xs  text-lg"
                                     v-model="email" id="email" />
@@ -193,10 +216,14 @@ const getEvents = async () =>{
                                         Notes :
                                     </span>
                                 </label>
-                                <span class="text-sm text-red-500 pb-2" v-show="notes.length>500" >Notes length must be less than 500 character.</span>
+                                <span class="text-sm text-red-500 pb-2" v-show="notes.length==500" >A notes must be 1 - 500 characters.</span>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
-                                    placeholder="Type something..." maxlength="501"></textarea>
+                                    placeholder="Type something..." maxlength="500"></textarea>
+                                    <label class="label">
+                                    <span class="label-text-alt"></span>
+                                    <span class="label-text-alt">{{notes.length}}/500</span>
+                                </label>
                             </div>
                         </div>
                         <div class="alert alert-error shadow-lg w-72 h-12 text-[16px] text-white self-center" v-show="falseInput">

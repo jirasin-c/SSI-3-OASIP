@@ -21,7 +21,7 @@ const currentTime = ref(null)
 const isPast =ref(false)
 const isOverlapped = ref(false)
 const duration = ref()
-
+const exceptDate = ref(null)
 const compareDate = (editDate,currentTime)=>{
     if (editDate>currentTime) {
         isPast.value = false
@@ -65,6 +65,7 @@ const getDetailById = async () => {
   editDate.value = selectedEvent.value.eventStartTime.split('.')[0];
   beforeEditDate.value = editDate.value
 
+  exceptDate.value = new Date(selectedEvent.value.eventStartTime).toISOString()
   const localDate = new Date(selectedEvent.value.eventStartTime).toLocaleString(
     "th-TH",
     {
@@ -83,6 +84,7 @@ const updateEvent = async () => {
     isOverlapped.value = false
     const compareStartTime = new Date(editDate.value).toLocaleString()
     const compareStartTimeISO = new Date(editDate.value)
+    
     events.value.filter((findOvl)=>{
     const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
     const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
@@ -93,14 +95,22 @@ const updateEvent = async () => {
     const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
+    // console.log(findOvl.eventCategoryID.id);
            if ((findOvl.eventCategoryID.id === selectedEvent.value.eventCategoryID.id)) {
-           if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+            //  console.log(findOvl.id);
+            //  console.log(selectedEvent.value.id);
+        //     if (findOvl.id === selectedEvent.value.id) {
+        //      if(((compareEndTime < existingEndTime) && (compareEndTime <= existingStartTime)) || ((compareStartTime < existingStartTime) &&(compareStartTime > existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime)))  {
+        //    isOverlapped.value = true
+        //    alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+        //    }
+        // }else 
+        if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime)))  {
            isOverlapped.value = true
            alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
            }
        }
        })
-
   if (isOverlapped.value == true) {
       return
   }
@@ -108,7 +118,7 @@ const updateEvent = async () => {
             editDate.value = editDate.value
             alert("Start time must be in the future")
             return
-        }  
+        } 
   if (confirm(`Are you sure to update the booking information ?`)) {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${selectedEvent.value.id}`, {
       method: 'PUT',
@@ -179,9 +189,16 @@ window.onbeforeunload = function () {
                 Notes: 
               </label>
             <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes }}</p>
-            <p><textarea type="text" rows="1" v-show="isEdit" id="notes" v-model="editNote"
+            <p>
+              <span class="text-sm text-red-500 pb-2" v-show="editNote.length==500" >* A notes length must be 1 - 500 character.</span>
+              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
                 class="textarea textarea-secondary text-lg w-full overflow-auto "
-                ></textarea></p>
+                maxlength="500"></textarea>
+                  <label class="label">
+                    <span class="label-text-alt"></span>
+                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
+                  </label>
+                  </p>
             </p>
             <p v-else>
               <IcNote class="inline-block mr-5" />
@@ -189,9 +206,16 @@ window.onbeforeunload = function () {
                 Notes: 
               </label>
             <p v-show="!isEdit" class="inline-block">NO MESSAGE</p>
-            <p><textarea type="text" rows="1" v-show="isEdit" id="notes" v-model="editNote"
+            <p>
+              <span class="text-sm text-red-500 pb-2" v-show="editNote.length==500" >* A notes length must be 1 - 500 character.</span>
+              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
                 class="textarea textarea-secondary text-lg w-full overflow-auto "
-                ></textarea></p>
+                maxlength="500"></textarea>
+                  <label class="label">
+                    <span class="label-text-alt"></span>
+                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
+                  </label>
+                </p>
             </p>
             <br />
             <p>
@@ -204,7 +228,7 @@ window.onbeforeunload = function () {
             <input v-show="isEdit" type="datetime-local"
               class="input input-bordered input-secondary w-auto max-w-xs text-lg" id="starttime" v-model="editDate" :min="currentTime"/>
             </p>
-              <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">Start time must be in the future.</span>
+              <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">* Start time must be in the future.</span>
           </div>
           <div class="card-actions justify-end m-5">
             <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
