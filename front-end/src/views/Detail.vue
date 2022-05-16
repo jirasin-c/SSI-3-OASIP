@@ -14,7 +14,7 @@ let { params } = useRoute();
 const bookingId = params.bookingId;
 const editDate = ref(null)
 const beforeEditDate = ref(null)
-const editNote = ref(null)
+const editNote = ref('')
 const beforeEditNote = ref(null)
 const isEdit = ref(false)
 const currentTime = ref(null)
@@ -51,13 +51,13 @@ const getEvents = async() =>{
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
     eventCategory.value = await res.json()
-    console.log(eventCategory.value);
+    // console.log(eventCategory.value);
 }
 
 const getDetailById = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`);
   selectedEvent.value = await res.json();
-  console.log(selectedEvent.value);
+  // console.log(selectedEvent.value);
   getEventCategoryName.value =
     selectedEvent.value.eventCategoryID.eventCategoryName;
   editNote.value = selectedEvent.value.eventNotes

@@ -18,6 +18,7 @@ const currentTime = ref(null)
 const isPast = ref(false)
 const isOverlapped = ref(false)
 const isNotEmail = ref(false)
+
 onUpdated(() => {
     currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2) 
     eventCategory.value.filter((findID) => {
@@ -26,6 +27,8 @@ onUpdated(() => {
             duration.value = findID.eventDuration
         }
     });
+        // validateOverlapped()
+        // console.log(isOverlapped.value);
 })
 onBeforeMount(async () => {
     await getEventCategory()
@@ -59,6 +62,38 @@ const validateEmail = () =>{
             }
 }
 
+// const validateOverlapped = ()=>{
+//     isOverlapped.value = false
+//     const compareStartTime = new Date(startTime.value).toLocaleString()
+//     const compareStartTimeISO = new Date(startTime.value)
+
+//     events.value.filter((findOvl)=>{
+//     const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
+//     const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
+//     const durationToMillisec = duration.value* 60000
+//     const existDuration = findOvl.eventDuration * 60000
+//     const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
+//     const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
+//     const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
+//     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
+//     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
+//     // console.log(existingStartTime.value);
+//     // console.log(alertExistEndTime.value);
+//        if ((findOvl.eventCategoryID.id === categoryID.value)) {
+//         //    console.log(existingEndTime);
+//         //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+//             if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime))|| ((compareStartTime > existingStartTime) && (compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+//             // if(((compareStartTime == existingStartTime)&&(compareEndTime == existingEndTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+//             // if(((compareStartTime<existingEndTime)&&(compareEndTime>=existingEndTime)) && ((compareStartTime>=existingStartTime) && (compareEndTime>=existingStartTime))) {
+//         //    if((existingStartTime<compareStartTime&&compareStartTime<existingEndTime)||(existingStartTime<compareEndTime&&compareEndTime<existingEndTime))  {
+//             //    console.log(compareEndTime);
+//            isOverlapped.value = true
+//            alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+//            }
+//        }
+//     })
+// }
+
 const createEvent = async () => {
     isOverlapped.value = false
     const compareStartTime = new Date(startTime.value).toLocaleString()
@@ -75,9 +110,11 @@ const createEvent = async () => {
     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
        if ((findOvl.eventCategoryID.id === categoryID.value)) {
-           console.log(existingEndTime);
+        //    console.log(existingEndTime);
         //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
-            if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+            // if(((compareStartTime == existingStartTime)&&(compareEndTime == existingEndTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+            // if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime))|| ((compareStartTime > existingStartTime) && (compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
+            if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))){
             // if(((compareStartTime<existingEndTime)&&(compareEndTime>=existingEndTime)) && ((compareStartTime>=existingStartTime) && (compareEndTime>=existingStartTime))) {
         //    if((existingStartTime<compareStartTime&&compareStartTime<existingEndTime)||(existingStartTime<compareEndTime&&compareEndTime<existingEndTime))  {
             //    console.log(compareEndTime);
@@ -86,20 +123,23 @@ const createEvent = async () => {
            }
        }
     })
+    if (name.value == '' || email.value == '' || startTime.value == null ) {
+        startTime.value = startTime.value
+        falseInput.value = true 
+        return 
+    }
+
     if (isOverlapped.value == true) {
+        // alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
         return
     }
+
     if (isPast.value == true) {
             startTime.value = startTime.value
             alert("Start time is in the past, Please select new date")
         return
     }  
 
-    if (name.value == '' || email.value == '' || startTime.value == null ) {
-        startTime.value = startTime.value
-        falseInput.value = true 
-        return 
-    }
         if (name.value.length==100 || notes.value.length==500 ) {
             startTime.value = startTime.value
             alert("Field longer string can't be event.")
@@ -138,12 +178,12 @@ const createEvent = async () => {
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
     eventCategory.value = await res.json()
-    console.log(eventCategory.value);
+    // console.log(eventCategory.value);
 }
 const getEvents = async () =>{
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
     events.value = await res.json()
-    console.log(events.value);
+    // console.log(events.value);
 } 
 
 </script>
@@ -186,6 +226,7 @@ const getEvents = async () =>{
                                     </span>
                                 </label>
                                     <span class="text-sm text-red-500 pb-2" v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
+                                    <!-- <span class="text-sm text-red-500 pb-2" v-show="isOverlapped">Start time is overlapped.</span> -->
                                 <input type="datetime-local" placeholder="Type here"
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg"
                                     v-model="startTime" id="starttime" :min="currentTime">
@@ -210,7 +251,7 @@ const getEvents = async () =>{
                                 <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email address.</span>
                                 <input type="email" placeholder="example@mail.kmutt.ac.th"
                                     class="input input-bordered input-secondary w-full max-w-xs  text-lg"
-                                    v-model="email" id="email" />
+                                    v-model="email" id="email"/>
                                 <label for="notes" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Notes :
