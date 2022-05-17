@@ -7,12 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class EventDTO implements Serializable {
-    private  Integer id;
-    private  String bookingName;
-    private String bookingEmail;
+public class EventEditDTO implements Serializable {
     private  Date eventStartTime;
-    private  Integer eventDuration;
     private  String eventNotes;
-    private String eventCategoryName;
 }

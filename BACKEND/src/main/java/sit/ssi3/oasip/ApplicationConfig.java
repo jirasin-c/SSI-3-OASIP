@@ -1,7 +1,6 @@
 package sit.ssi3.oasip;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sit.ssi3.oasip.utils.ListMapper;

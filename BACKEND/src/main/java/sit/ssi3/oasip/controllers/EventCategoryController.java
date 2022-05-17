@@ -6,7 +6,6 @@ import sit.ssi3.oasip.dtos.EventcategoryDTO;
 import sit.ssi3.oasip.entities.Eventcategory;
 import sit.ssi3.oasip.services.EventCategoryService;
 
-
 import java.util.List;
 
 @RestController
@@ -16,13 +15,20 @@ public class EventCategoryController {
     private EventCategoryService eventCategoryService;
 
     @GetMapping("")
-    private List<Eventcategory> getEventCategory(){
+    private List<Eventcategory> getEventCategory() {
         return eventCategoryService.getEventCategory();
     }
 
     @GetMapping("/getCategoryName")
-    private EventcategoryDTO getEventCategoryByName(@RequestParam String eventCategoryName) {return eventCategoryService.getEventCategoryByName(eventCategoryName);}
+    private EventcategoryDTO getEventCategoryByName(@RequestParam String eventCategoryName) {
+        return eventCategoryService.getEventCategoryByName(eventCategoryName);
+    }
 
+
+    @GetMapping("/{getCategoryByID}")
+    private Eventcategory getEventcategoryByID(@PathVariable Integer getCategoryByID) {
+        return eventCategoryService.getEventcategoryByID(getCategoryByID);
+    }
 
 }
 

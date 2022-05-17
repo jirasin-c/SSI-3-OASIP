@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.dtos.EventDTO;
-import sit.ssi3.oasip.services.EventService;
+import sit.ssi3.oasip.dtos.EventEditDTO;
+import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.request.CreateEventRequest;
+import sit.ssi3.oasip.services.EventService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,9 +30,9 @@ public class EventController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody CreateEventRequest newEvent) {
+    public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest newEvent) {
         Event newEventSaved = eventService.createEvent(newEvent);
-        return new ResponseEntity<Event>(newEventSaved,HttpStatus.CREATED);
+        return new ResponseEntity<Event>(newEventSaved, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventID}")
@@ -41,8 +41,8 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public Event updateEvent(@RequestBody Event updateEvent, @PathVariable Integer id){
-        return eventService.updateEvent(updateEvent,id);
+    public EventDTO updateEvent(@RequestBody EventEditDTO updateEvent, @PathVariable Integer id) {
+        return eventService.updateEvent(updateEvent, id);
 
     }
 

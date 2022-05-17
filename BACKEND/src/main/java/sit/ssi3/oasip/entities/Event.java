@@ -4,8 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
 @Data
 @Table(name = "event", indexes = {
@@ -18,29 +16,34 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotEmpty(message = "must not be empty")
-    @Size(min = 1,max = 100,message = "size must be between 1 and 100")
+
+    @NotEmpty(message = "Name must not be null")
+    @Size(min = 1, max = 100, message = "Name size must be between 1 and 100")
     @Column(name = "bookingName", nullable = false)
     private String bookingName;
 
-    @Email(message = "Email must be well-formed email address" , regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
-    @NotEmpty(message = "must not be empty")
-    @Size(max = 255,message = "size must be between 1 and 255")
+    @Email(message = "Email must be well-formed email address", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+    @NotEmpty(message = "Email must not be null")
+    @Size(max = 100, message = "Email size must be between 1 and 100")
     @Column(name = "bookingEmail", nullable = false)
     private String bookingEmail;
 
-    @Future(message = "must be a future date")
+
+    @NotNull(message = "Start time must not be null")
+    @Future(message = "Start time must be a future date")
     @Column(name = "eventStartTime", nullable = false)
     private Date eventStartTime;
+
 
     @Column(name = "eventDuration", nullable = false)
     private Integer eventDuration;
 
 
-    @Size(max = 500,message = "size must be between 0 and 500")
+    @Size(max = 500, message = "size must be between 0 and 500")
     @Column(name = "eventNotes", length = 500)
     private String eventNotes;
 
+    @NotNull(message = "Category ID must not be null")
     @ManyToOne(optional = false)
     @JoinColumn(name = "eventCategoryID", nullable = false)
     private Eventcategory eventCategoryID;
