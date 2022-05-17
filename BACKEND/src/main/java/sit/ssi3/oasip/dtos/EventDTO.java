@@ -1,4 +1,4 @@
-package sit.ssi3.oasip.entities;
+package sit.ssi3.oasip.dtos;
 
 import lombok.Data;
 

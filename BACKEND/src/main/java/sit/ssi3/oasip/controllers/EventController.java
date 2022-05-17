@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.entities.Event;
-import sit.ssi3.oasip.entities.EventDTO;
+import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.services.EventService;
 import sit.ssi3.oasip.request.CreateEventRequest;
 

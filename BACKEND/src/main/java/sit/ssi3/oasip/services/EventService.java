@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.entities.Event;
 
-import sit.ssi3.oasip.entities.EventDTO;
+import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.request.CreateEventRequest;
 import sit.ssi3.oasip.utils.ListMapper;
@@ -47,7 +47,6 @@ public class EventService {
         );
         return modelMapper.map(event, EventDTO.class);
     }
-
 
     public Event createEvent(CreateEventRequest newEvent) {
         // find all event
@@ -107,6 +106,7 @@ public class EventService {
                 });
         return eventRepository.saveAndFlush(event);
     }
+
 
     private Event mapEvent(Event existingEvent, Event updateEvent) {
         existingEvent.setEventNotes(updateEvent.getEventNotes());
