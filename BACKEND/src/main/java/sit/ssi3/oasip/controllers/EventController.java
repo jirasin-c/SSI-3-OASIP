@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.entities.Event;
+import sit.ssi3.oasip.entities.EventDTO;
 import sit.ssi3.oasip.services.EventService;
 import sit.ssi3.oasip.request.CreateEventRequest;
 
@@ -19,11 +20,11 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("")
-    public List<Event> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+    public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
         return eventService.getEvent(sortBy);
     }
     @GetMapping("/{id}")
-    public  Event getEventByID(@PathVariable Integer id){
+    public EventDTO getEventByID(@PathVariable Integer id){
         return eventService.getEventById(id);
     }
 

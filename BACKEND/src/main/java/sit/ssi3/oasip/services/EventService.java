@@ -1,6 +1,7 @@
 package sit.ssi3.oasip.services;
 
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -8,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.entities.Event;
 
+import sit.ssi3.oasip.entities.EventDTO;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.request.CreateEventRequest;
+import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.validation.*;
 import java.util.*;
@@ -20,6 +23,10 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
     @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private ListMapper listMapper;
+    @Autowired
     private static final Validator validator =
             Validation.byDefaultProvider()
                     .configure()
@@ -27,16 +34,18 @@ public class EventService {
                     .buildValidatorFactory()
                     .getValidator();
 
-    public List<Event> getEvent(String sortBy) {
-        return eventRepository.findAll(Sort.by(sortBy).descending());
+    public List<EventDTO> getEvent(String sortBy) {
+        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
     }
 
-    public Event getEventById(Integer id) {
-        return eventRepository.findById(id).orElseThrow(() ->
+    public EventDTO getEventById(Integer id) {
+        Event event= eventRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Event ID " + id + "Does not Exits"
                 )
         );
+        return modelMapper.map(event, EventDTO.class);
     }
 
 
