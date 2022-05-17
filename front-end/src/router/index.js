@@ -11,12 +11,12 @@ const routes = [
     component: Home,
   },
   {
-    path: "/event-detail",
+    path: "/event-detail/",
     name: "Detail",
     component: Detail,
   },
   {
-    path: "/booking",
+    path: "/booking/",
     name: "Booking",
     component: Booking,
   },

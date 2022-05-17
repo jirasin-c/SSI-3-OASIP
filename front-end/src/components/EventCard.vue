@@ -1,6 +1,6 @@
 <script setup>
 import MdiTrashCan from "./MdiTrashCan.vue";
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import RiDeleteBin6Line from "./RiDeleteBin6Line.vue";
 const prop = defineProps({
   allBooking: {
@@ -8,24 +8,23 @@ const prop = defineProps({
     require: true,
   },
 });
-
 defineEmits(["viewDetail", "deleteEvent"]);
 </script>
 
 <template>
   <div>
-    <div v-for="booking in allBooking" :key="booking.id">
+    <div v-for="booking in prop.allBooking" :key="booking.id">
       <!-- <router-link :to="{ name: 'Detail', params: { bookingId: booking.id } }"> -->
       <div @click="$emit('viewDetail', { bookingId: booking.id, event: $event })" class="cursor">
         <div
           class="hover:bg-slate-500 hover:text-white grid break-inside-avoid rounded-xl p-4 mb-8 w-full break-words drop-shadow-md text-ellipsis overflow-hidden bg-gray-200 text-slate-500">
           <div class="badge badge badge-accent badge-outline mb-1">
-            {{ booking.eventCategoryID.eventCategoryName }}
+            {{ booking.eventCategoryName }}
           </div>
           <div class="flex flex-row">
             <div>
               <span><b>Name: {{ booking.bookingName }}</b><br />
-                <b>Category: {{ booking.eventCategoryID.eventCategoryName }}</b></span>
+                <b>Category: {{ booking.eventCategoryName }}</b></span>
 
               <br />
               Date: {{ booking.eventStartTime }}<br />

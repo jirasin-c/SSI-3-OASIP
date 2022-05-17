@@ -38,33 +38,36 @@ const compareDate = (editDate,currentTime)=>{
 
 onUpdated(() => {
     currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
-    eventCategory.value.filter((findID) => {
-        if (findID.eventCategoryName === getEventCategoryName.value) {
-            duration.value = findID.eventDuration
-        }
-    });
+    // eventCategory.value.filter((findID) => {
+        // if (findID.eventCategoryName === getEventCategoryName.value) {
+            duration.value = eventCategory.value.eventDuration
+        // }
+    // });
 })
 const getEvents = async() =>{
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
   events.value = await res.json()
+  // console.log(events.value);
 }
 const getEventCategory = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category/getCategoryName?eventCategoryName=${selectedEvent.value.eventCategoryName}`)
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }
 
 const getDetailById = async () => {
+  // console.log(bookingId);
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`);
   selectedEvent.value = await res.json();
   // console.log(selectedEvent.value);
-  getEventCategoryName.value =
-    selectedEvent.value.eventCategoryID.eventCategoryName;
+  // getEventCategoryName.value =
+  //   selectedEvent.value.eventCategoryName;
   editNote.value = selectedEvent.value.eventNotes
   beforeEditNote.value = editNote.value
   editDate.value = selectedEvent.value.eventStartTime.split('.')[0];
   beforeEditDate.value = editDate.value
 
+  // console.log(selectedEvent.value.eventNotes);
   exceptDate.value = new Date(selectedEvent.value.eventStartTime).toISOString()
   const localDate = new Date(selectedEvent.value.eventStartTime).toLocaleString(
     "th-TH",
@@ -88,15 +91,16 @@ const updateEvent = async () => {
     events.value.filter((findOvl)=>{
     const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
     const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
-    const durationToMillisec = duration.value* 60000
     const existDuration = findOvl.eventDuration * 60000
     const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
+
+    const durationToMillisec = duration.value* 60000
     const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
     const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
     // console.log(findOvl.eventCategoryID.id);
-           if ((findOvl.eventCategoryID.id === selectedEvent.value.eventCategoryID.id)) {
+    if ((findOvl.eventCategoryName === selectedEvent.value.eventCategoryName)) {
             //  console.log(findOvl.id);
             //  console.log(selectedEvent.value.id);
         //     if (findOvl.id === selectedEvent.value.id) {
@@ -105,12 +109,19 @@ const updateEvent = async () => {
         //    alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
         //    }
         // }else 
-        if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime)))  {
+        if(editDate.value == beforeEditDate.value) {
+          isOverlapped.value = false
+        }else if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime)))  {
            isOverlapped.value = true
-           alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
-           }
+        }
+
+        if (isOverlapped.value == true) {
+          alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+          return
+        }
+
        }
-       })
+    })
   if (isOverlapped.value == true) {
       return
   }
@@ -119,6 +130,7 @@ const updateEvent = async () => {
             alert("Start time must be in the future")
             return
         } 
+  // if(selectedEvent.value.eventStartTime == )
   if (confirm(`Are you sure to update the booking information ?`)) {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${selectedEvent.value.id}`, {
       method: 'PUT',
@@ -144,8 +156,8 @@ const updateEvent = async () => {
 }
 onBeforeMount(async () => {
   await getDetailById();
-  await getEvents()
   await getEventCategory()
+  await getEvents()
   currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
 
 });
@@ -163,23 +175,43 @@ window.onbeforeunload = function () {
         <div class="card w-auto lg:w-[1200px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm mb-12">
           <div class="card-body text-xl md:text-3xl place-self-center">
             <p
-              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center ">
-              {{ getEventCategoryName }}
+              class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center " v-if="isEdit==false">
+              {{ selectedEvent.eventCategoryName }}
             </p>
+              <input type="text" :placeholder="selectedEvent.eventCategoryName"
+                    class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
+                  id="duration"  v-else/>
             <div class="divider"></div>
 
             <p>
-              <IcPerson class="inline-block mr-5" /> Name: {{ selectedEvent.bookingName }}
+              <IcPerson class="inline-block mr-5" /> 
+              <label> Name: 
+               <span v-if="isEdit==false">{{ selectedEvent.bookingName }}</span>
+               <span v-else><input type="text" :placeholder="selectedEvent.bookingName"
+                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
+                  id="duration" /></span>
+              </label> 
             </p>
+            
             <br />
             <p>
               <IcEmail class="inline-block mr-5 " />
-              Email: {{ selectedEvent.bookingEmail }}
+              <label> Email: 
+               <span v-if="isEdit==false">{{ selectedEvent.bookingEmail }}</span>
+               <span v-else><input type="text" :placeholder="selectedEvent.bookingEmail"
+                    class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
+                  id="duration" /></span>
+              </label> 
             </p>
             <br />
             <p>
               <IcTimer class="inline-block mr-5" />
-              Duration: {{ selectedEvent.eventDuration }} mins
+              <label> Duration: 
+               <span v-if="isEdit==false">{{ selectedEvent.eventDuration }} mins</span>
+               <span v-else><input type="text" :placeholder="selectedEvent.eventDuration"
+                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
+                  id="duration" /></span>
+              </label> 
             </p>
             <br />
             <p v-if="selectedEvent.eventNotes != ''">
@@ -190,7 +222,7 @@ window.onbeforeunload = function () {
               </label>
             <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes }}</p>
             <p>
-              <span class="text-sm text-red-500 pb-2" v-show="editNote.length==500" >* A notes length must be 1 - 500 character.</span>
+              <span class="text-sm text-red-500 pb-2" v-show="editNote.length == 500" >* A notes length must be 1 - 500 character.</span>
               <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
                 class="textarea textarea-secondary text-lg w-full overflow-auto "
                 maxlength="500"></textarea>

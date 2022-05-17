@@ -29,6 +29,7 @@ const getEvent = async () => {
 };
 
 const getDetail = (id) => {
+  // console.log(id);
   appRouter.push({ name: 'Detail', params: { bookingId: id.bookingId } })
 }
 const cancelEvent = async (id) => {
@@ -47,6 +48,7 @@ const cancelEvent = async (id) => {
 }
 onBeforeMount(async () => {
   await getEvent();
+  // console.log(event.value);
 });
 </script>
 

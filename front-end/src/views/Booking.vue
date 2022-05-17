@@ -13,6 +13,7 @@ const falseInput = ref(false)
 const email = ref('')
 const notes = ref('')
 const duration = ref()
+const categoryName = ref('')
 const appRouter = useRouter()
 const currentTime = ref(null)
 const isPast = ref(false)
@@ -20,11 +21,17 @@ const isOverlapped = ref(false)
 const isNotEmail = ref(false)
 
 onUpdated(() => {
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2) 
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+((new Date().getMinutes()+1))
+    // console.log(currentTime.value);
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
+            // duration.value = eventCategory.value.eventDuration
             duration.value = findID.eventDuration
+            categoryName.value = findID.eventCategoryName
+            // console.log(categoryID.value);
+            // console.log(duration.value);
+            // console.log(categoryName.value);
         }
     });
         // validateOverlapped()
@@ -33,7 +40,8 @@ onUpdated(() => {
 onBeforeMount(async () => {
     await getEventCategory()
     await getEvents()
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+((new Date().getMinutes()+1))
+    // currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
 })
 
 const compareDate = (startTime,currentTime)=>{
@@ -54,10 +62,11 @@ const validateEmail = () =>{
     const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             if (email.value.match(validRegex) && email.value.length > 0) {
                 isNotEmail.value = false
-            }else if (email.value.length == 0) {
+            }else if (email.value.length == 0 || email.value == ' ') {
                 isNotEmail.value = true
                 return false
             }else{
+                isNotEmail.value = true
                 return true
             }
 }
@@ -102,14 +111,17 @@ const createEvent = async () => {
     events.value.filter((findOvl)=>{
     const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
     const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
-    const durationToMillisec = duration.value* 60000
     const existDuration = findOvl.eventDuration * 60000
     const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
+    
+    const durationToMillisec = duration.value* 60000
     const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
     const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
     const startTimePlusDuration = startTimeToMillisec + durationToMillisec
     const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
-       if ((findOvl.eventCategoryID.id === categoryID.value)) {
+    // console.log(findOvl.eventCategoryName)
+    // console.log(categoryName.value);
+       if ((findOvl.eventCategoryName === categoryName.value)) {
         //    console.log(existingEndTime);
         //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
             // if(((compareStartTime == existingStartTime)&&(compareEndTime == existingEndTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
@@ -124,6 +136,7 @@ const createEvent = async () => {
        }
     })
     if (name.value == '' || email.value == '' || startTime.value == null ) {
+
         startTime.value = startTime.value
         falseInput.value = true 
         return 
@@ -145,30 +158,31 @@ const createEvent = async () => {
             alert("Field longer string can't be event.")
         }else{
             if (isNotEmail.value == false) {
-                const utc = new Date(startTime.value).toISOString()
-                startTime.value = utc
-                const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        bookingName: name.value,
-                        bookingEmail: email.value,
-                        eventStartTime: startTime.value,
-                        eventDuration: duration.value,
-                        eventNotes: notes.value,
-                        eventCategoryID: {
-                            id: categoryID.value,
-                        }
-                    })
-                })
-                if (res.status === 201) {
-                    alert("Event created successfully")
-                    appRouter.push({ name: 'Home' })
-                } else {
-                    alert("Event can't created")
-                }     
+                falseInput.value = false
+                if (confirm(`Are you sure to the create the event ?`)) {
+                    // const utc = new Date(startTime.value).toISOString()
+                    // startTime.value = utc
+                    // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'content-type': 'application/json'
+                    //     },
+                    //     body: JSON.stringify({
+                    //         bookingName: name.value,
+                    //         bookingEmail: email.value,
+                    //         eventStartTime: startTime.value,
+                    //         eventDuration: duration.value,
+                    //         eventNotes: notes.value,
+                    //         eventCategoryID: categoryID.value,
+                    //     })
+                    // })
+                    // if (res.status === 201) {
+                        alert("Event created successfully")
+                    //     appRouter.push({ name: 'Home' })
+                    // } else {
+                    //     alert("Event can't created")
+                    // }     
+                }
             }else{
                 alert("Invalid email address!");
                 return
@@ -274,7 +288,7 @@ const getEvents = async () =>{
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Please fill the empty form</span>
+                                <span>Please fill the required field.</span>
                             </div>
                         </div>
                         <div class="card-actions justify-center">
