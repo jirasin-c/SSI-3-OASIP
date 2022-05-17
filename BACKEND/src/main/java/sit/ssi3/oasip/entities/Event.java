@@ -18,18 +18,18 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotEmpty(message = "Name must not be blank")
-    @Size(max = 100,message = "Name size must be between 0 and 100")
+    @NotEmpty(message = "must not be empty")
+    @Size(min = 1,max = 100,message = "size must be between 1 and 100")
     @Column(name = "bookingName", nullable = false)
     private String bookingName;
 
     @Email(message = "Email must be well-formed email address" , regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
-    @NotEmpty(message = "Email must not be blank")
-    @Size(max = 255,message = "Email size must be between 0 and 255")
+    @NotEmpty(message = "must not be empty")
+    @Size(max = 255,message = "size must be between 1 and 255")
     @Column(name = "bookingEmail", nullable = false)
     private String bookingEmail;
 
-    @Future(message = "Start time must be a future date/time")
+    @Future(message = "must be a future date")
     @Column(name = "eventStartTime", nullable = false)
     private Date eventStartTime;
 
@@ -37,7 +37,7 @@ public class Event {
     private Integer eventDuration;
 
 
-    @Size(max = 500,message = "Notes size must be between 0 and 500")
+    @Size(max = 500,message = "size must be between 0 and 500")
     @Column(name = "eventNotes", length = 500)
     private String eventNotes;
 
@@ -46,8 +46,11 @@ public class Event {
     private Eventcategory eventCategoryID;
 
     @Transient
-    @AssertTrue(message = "overlapped")
+    @AssertFalse(message = "this event is overlapped with other events" )
     private boolean isOverlapped;
+
+
+
 //    public Eventcategory getEventCategoryID() {
 //        return eventCategoryID;
 //    }

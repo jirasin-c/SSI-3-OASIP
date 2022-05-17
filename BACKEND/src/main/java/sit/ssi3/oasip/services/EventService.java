@@ -2,28 +2,16 @@ package sit.ssi3.oasip.services;
 
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import sit.ssi3.oasip.entities.Event;
-import sit.ssi3.oasip.repositories.EventCategoryRepository;
-import sit.ssi3.oasip.repositories.EventRepository;
-import sit.ssi3.request.CreateEventRequest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.AssertTrue;
+import sit.ssi3.oasip.repositories.EventRepository;
+import sit.ssi3.oasip.request.CreateEventRequest;
+
+import javax.validation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +38,7 @@ public class EventService {
                 )
         );
     }
+
 
     public Event createEvent(CreateEventRequest newEvent) {
         // find all event
@@ -88,7 +77,8 @@ public class EventService {
             System.out.println(violation.getMessage());
         }
         // return when error message contains
-        if (violations.size() > 0) return null; // custom error response
+        if (violations.size() > 0) throw new ConstraintViolationException(violations);
+        // custom error response
         return this.eventRepository.saveAndFlush(event); // return success service
     }
 

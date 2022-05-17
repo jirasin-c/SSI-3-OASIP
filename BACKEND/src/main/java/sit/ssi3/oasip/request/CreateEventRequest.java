@@ -1,4 +1,4 @@
-package sit.ssi3.request;
+package sit.ssi3.oasip.request;
 
 import lombok.Data;
 import sit.ssi3.oasip.entities.Eventcategory;
