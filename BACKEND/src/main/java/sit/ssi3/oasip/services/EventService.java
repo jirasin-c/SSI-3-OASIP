@@ -68,30 +68,38 @@ public class EventService {
         event.setEventStartTime(newEvent.getEventStartTime());
         event.setOverlapped(false);
 
-
         // find all event
-        List<Event> eventList = this.eventRepository.findAll();
+        List<Event> eventList = this.eventRepository.findByEventCategoryID_Id(newEvent.getEventCategoryID() );
         if (newEvent.getEventStartTime() != null && event.getEventDuration() != null) {
 
             // check event overlapped
             eventList = eventList.stream().filter(oldEvent -> {
                 Date startTime = new Date(oldEvent.getEventStartTime().getTime());
+//                System.out.println("StartTime"+startTime);
                 Date newEventStartTime = event.getEventStartTime();
+//                System.out.println("Start"+newEventStartTime);
                 Date endTime = new Date((startTime.getTime() + (oldEvent.getEventDuration() * 60000)));
+//                System.out.println("endTime"+endTime);
                 Date newEventEndTime = new Date((newEventStartTime.getTime() + (event.getEventDuration() * 60000)));
-                if(((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0)) || ((startTime.compareTo(newEventEndTime) < 0) && (newEventEndTime.compareTo(endTime) <= 0))
-                        || ((newEventStartTime.compareTo(startTime) < 0) && (endTime.compareTo(newEventEndTime) < 0)) || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))){
+//                System.out.println("End"+newEventEndTime);
+                if(((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0))
+                        || ((startTime.compareTo(newEventEndTime) < 0) && (newEventEndTime.compareTo(endTime) <= 0))
+                        || ((newEventStartTime.compareTo(startTime) < 0) && (endTime.compareTo(newEventEndTime) < 0))
+                        || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))){
                     return true;
                 }
                 return false;
             }).collect(Collectors.toList());
+
         }
+//        System.out.println(eventList);
+
+
 
         // check overlapped
         if (eventList.size() > 0 && newEvent.getEventStartTime() != null && event.getEventDuration() != null) {
             event.setOverlapped(true);
         }
-
         // validate event field
         Set<ConstraintViolation<Event>> violations = validator.validate(event);
         for (ConstraintViolation<Event> violation : violations) {
