@@ -75,14 +75,12 @@ public class EventService {
 
             // check event overlapped
             eventList = eventList.stream().filter(oldEvent -> {
-                Date startTime = oldEvent.getEventStartTime();
+                Date startTime = new Date(oldEvent.getEventStartTime().getTime());
                 Date newEventStartTime = event.getEventStartTime();
                 Date endTime = new Date((startTime.getTime() + (oldEvent.getEventDuration() * 60000)));
                 Date newEventEndTime = new Date((newEventStartTime.getTime() + (event.getEventDuration() * 60000)));
-                if (newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) > 0 ||
-                        newEventStartTime.compareTo(startTime) > 0 && newEventEndTime.compareTo(endTime) < 0 ||
-                        newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) < 0 ||
-                        newEventStartTime.compareTo(startTime) < 0 && newEventEndTime.compareTo(endTime) > 0) {
+                if(((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0)) || ((startTime.compareTo(newEventEndTime) < 0) && (newEventEndTime.compareTo(endTime) <= 0))
+                        || ((newEventStartTime.compareTo(startTime) < 0) && (endTime.compareTo(newEventEndTime) < 0)) || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))){
                     return true;
                 }
                 return false;
