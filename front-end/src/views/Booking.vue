@@ -160,28 +160,28 @@ const createEvent = async () => {
             if (isNotEmail.value == false) {
                 falseInput.value = false
                 if (confirm(`Are you sure to the create the event ?`)) {
-                    // const utc = new Date(startTime.value).toISOString()
-                    // startTime.value = utc
-                    // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'content-type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify({
-                    //         bookingName: name.value,
-                    //         bookingEmail: email.value,
-                    //         eventStartTime: startTime.value,
-                    //         eventDuration: duration.value,
-                    //         eventNotes: notes.value,
-                    //         eventCategoryID: categoryID.value,
-                    //     })
-                    // })
-                    // if (res.status === 201) {
+                    const utc = new Date(startTime.value).toISOString()
+                    startTime.value = utc
+                    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            bookingName: name.value,
+                            bookingEmail: email.value,
+                            eventStartTime: startTime.value,
+                            eventDuration: duration.value,
+                            eventNotes: notes.value,
+                            eventCategoryID: categoryID.value,
+                        })
+                    })
+                    if (res.status === 201) {
                         alert("Event created successfully")
-                    //     appRouter.push({ name: 'Home' })
-                    // } else {
-                    //     alert("Event can't created")
-                    // }     
+                        appRouter.push({ name: 'Home' })
+                    } else {
+                        alert("Event can't created")
+                    }     
                 }
             }else{
                 alert("Invalid email address!");

@@ -62,7 +62,11 @@ const getDetailById = async () => {
   // console.log(selectedEvent.value);
   // getEventCategoryName.value =
   //   selectedEvent.value.eventCategoryName;
-  editNote.value = selectedEvent.value.eventNotes
+  if (selectedEvent.value.eventNotes == null) {
+    selectedEvent.value.eventNotes = ''
+  }else{
+    editNote.value = selectedEvent.value.eventNotes
+  }
   beforeEditNote.value = editNote.value
   editDate.value = selectedEvent.value.eventStartTime.split('.')[0];
   beforeEditDate.value = editDate.value
