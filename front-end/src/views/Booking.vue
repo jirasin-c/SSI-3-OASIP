@@ -260,8 +260,8 @@ const getEvents = async () =>{
                                         Duration:
                                     </span>
                                 </label>
-                                <input type="text" :placeholder="duration"
-                                    class="input input-bordered input-secondary w-full max-w-xs " disabled
+                                <input type="text" v-model="duration"
+                                    class="input input-bordered input-secondary w-full max-w-xs text-gray-50" disabled
                                     id="duration" />
                                 <label for="starttime" class="label">
                                     <span class="label-text text-base font-semibold">
@@ -278,7 +278,7 @@ const getEvents = async () =>{
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1 - 100 characters.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1 - 100 characters. **</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
                                     id="name" maxlength="100"/>
@@ -292,7 +292,7 @@ const getEvents = async () =>{
                                     </span>
                                 </label>
                                 <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email address.</span>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** A name must be 1 - 100 characters.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** An email must be 1 - 100 characters. **</span>
                                 <input type="email" placeholder="example@mail.kmutt.ac.th"
                                     class="input input-bordered input-secondary w-full max-w-xs  text-lg"
                                     v-model="email" id="email" maxlength="100"/>
@@ -305,7 +305,7 @@ const getEvents = async () =>{
                                         Notes :
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500" >** A notes must be 1 - 500 characters.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500" >** A notes must be 1 - 500 characters. **</span>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
                                     placeholder="Type something..." maxlength="500"></textarea>
