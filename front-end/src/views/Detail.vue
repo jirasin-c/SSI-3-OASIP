@@ -186,7 +186,28 @@ window.onbeforeunload = function () {
                     class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
                   id="duration"  v-else/>
             <div class="divider"></div>
-
+            <p>
+              <IcTimer class="inline-block mr-5" />
+              <label> Duration: 
+               <span v-if="isEdit==false">{{ selectedEvent.eventDuration }} mins</span>
+               <span v-else><input type="text" :placeholder="selectedEvent.eventDuration"
+                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
+                  id="duration" /></span>
+              </label> 
+            </p>
+            <br />
+            <p>
+              <IcCalendar class="inline-block mr-5" />
+              <label for="starttime">
+                Start time  :
+              </label>
+            <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventStartTime }}</p>
+            <!-- <span class="text-red-500 mr-2" v-show="isEdit" >*</span> -->
+            <input v-show="isEdit" type="datetime-local"
+              class="input input-bordered input-secondary w-auto max-w-xs text-lg" id="starttime" v-model="editDate" :min="currentTime"/>
+            </p>
+              <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">* Start time must be in the future.</span>
+            <br/>
             <p>
               <IcPerson class="inline-block mr-5" /> 
               <label> Name: 
@@ -196,7 +217,6 @@ window.onbeforeunload = function () {
                   id="duration" /></span>
               </label> 
             </p>
-            
             <br />
             <p>
               <IcEmail class="inline-block mr-5 " />
@@ -204,16 +224,6 @@ window.onbeforeunload = function () {
                <span v-if="isEdit==false">{{ selectedEvent.bookingEmail }}</span>
                <span v-else><input type="text" :placeholder="selectedEvent.bookingEmail"
                     class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
-                  id="duration" /></span>
-              </label> 
-            </p>
-            <br />
-            <p>
-              <IcTimer class="inline-block mr-5" />
-              <label> Duration: 
-               <span v-if="isEdit==false">{{ selectedEvent.eventDuration }} mins</span>
-               <span v-else><input type="text" :placeholder="selectedEvent.eventDuration"
-                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
                   id="duration" /></span>
               </label> 
             </p>
@@ -253,18 +263,6 @@ window.onbeforeunload = function () {
                   </label>
                 </p>
             </p>
-            <br />
-            <p>
-              <IcCalendar class="inline-block mr-5" />
-              <label for="starttime">
-                Start time  :
-              </label>
-            <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventStartTime }}</p>
-            <!-- <span class="text-red-500 mr-2" v-show="isEdit" >*</span> -->
-            <input v-show="isEdit" type="datetime-local"
-              class="input input-bordered input-secondary w-auto max-w-xs text-lg" id="starttime" v-model="editDate" :min="currentTime"/>
-            </p>
-              <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">* Start time must be in the future.</span>
           </div>
           <div class="card-actions justify-end m-5">
             <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
