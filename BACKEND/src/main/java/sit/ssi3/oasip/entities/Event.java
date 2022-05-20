@@ -1,5 +1,6 @@
 package sit.ssi3.oasip.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -30,7 +31,8 @@ public class Event {
 
 
     @NotNull(message = "Start time must not be null")
-    @Future(message = "Start time must be a future date")
+    @FutureOrPresent(message = "Start time must be a future date")
+    @JsonFormat(timezone = "UTC")
     @Column(name = "eventStartTime", nullable = false)
     private Date eventStartTime;
 

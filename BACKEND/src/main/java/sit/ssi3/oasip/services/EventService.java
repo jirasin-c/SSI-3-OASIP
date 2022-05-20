@@ -82,19 +82,19 @@ public class EventService {
 //                System.out.println("endTime"+endTime);
                 Date newEventEndTime = new Date((newEventStartTime.getTime() + (event.getEventDuration() * 60000)));
 //                System.out.println("End"+newEventEndTime);
-                if(((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0))
+                if (((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0))
                         || ((startTime.compareTo(newEventEndTime) < 0) && (newEventEndTime.compareTo(endTime) <= 0))
                         || ((newEventStartTime.compareTo(startTime) < 0) && (endTime.compareTo(newEventEndTime) < 0))
-                        || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))){
+                        || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))) {
                     return true;
                 }
                 return false;
             }).collect(Collectors.toList());
 
         }
-//        System.out.println(eventList);
-
-
+//        System.out.println(eventList)
+//        Date now= new Date();
+//        System.out.println(now);
 
         // check overlapped
         if (eventList.size() > 0 && newEvent.getEventStartTime() != null && event.getEventDuration() != null) {

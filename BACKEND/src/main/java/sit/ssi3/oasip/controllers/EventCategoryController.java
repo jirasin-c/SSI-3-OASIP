@@ -2,6 +2,7 @@ package sit.ssi3.oasip.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventcategoryDTO;
 import sit.ssi3.oasip.entities.Eventcategory;
 import sit.ssi3.oasip.services.EventCategoryService;
@@ -14,9 +15,14 @@ public class EventCategoryController {
     @Autowired
     private EventCategoryService eventCategoryService;
 
+//    @GetMapping("")
+//    private List<Eventcategory> getEventCategory() {
+//        return eventCategoryService.getEventCategory();
+//    }
+
     @GetMapping("")
-    private List<Eventcategory> getEventCategory() {
-        return eventCategoryService.getEventCategory();
+    public List<EventcategoryDTO> getEventCategory(@RequestParam(defaultValue = "id") String sortBy){
+        return eventCategoryService.getEventCategory(sortBy);
     }
 
     @GetMapping("/getCategoryName")
