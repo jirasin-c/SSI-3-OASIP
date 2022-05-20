@@ -62,7 +62,11 @@ const getDetailById = async () => {
   // console.log(selectedEvent.value);
   // getEventCategoryName.value =
   //   selectedEvent.value.eventCategoryName;
-  editNote.value = selectedEvent.value.eventNotes
+  if (selectedEvent.value.eventNotes == null) {
+    selectedEvent.value.eventNotes = ''
+  }else{
+    editNote.value = selectedEvent.value.eventNotes
+  }
   beforeEditNote.value = editNote.value
   editDate.value = selectedEvent.value.eventStartTime.split('.')[0];
   beforeEditDate.value = editDate.value
@@ -178,28 +182,16 @@ window.onbeforeunload = function () {
               class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center " v-if="isEdit==false">
               {{ selectedEvent.eventCategoryName }}
             </p>
-              <input type="text" :placeholder="selectedEvent.eventCategoryName"
-                    class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
+              <input type="text" v-model="selectedEvent.eventCategoryName"
+                    class="input input-bordered input-secondary w-full max-w-xs self-center text-2xl" disabled
                   id="duration"  v-else/>
             <div class="divider"></div>
-
             <p>
               <IcPerson class="inline-block mr-5" /> 
               <label> Name: 
                <span v-if="isEdit==false">{{ selectedEvent.bookingName }}</span>
-               <span v-else><input type="text" :placeholder="selectedEvent.bookingName"
-                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
-                  id="duration" /></span>
-              </label> 
-            </p>
-            
-            <br />
-            <p>
-              <IcEmail class="inline-block mr-5 " />
-              <label> Email: 
-               <span v-if="isEdit==false">{{ selectedEvent.bookingEmail }}</span>
-               <span v-else><input type="text" :placeholder="selectedEvent.bookingEmail"
-                    class="input input-bordered input-secondary w-full max-w-xs self-center" disabled
+               <span v-else><input type="text" v-model="selectedEvent.bookingName"
+                    class="input input-bordered input-secondary w-96 max-w-xs self-center text-lg" disabled
                   id="duration" /></span>
               </label> 
             </p>
@@ -208,46 +200,10 @@ window.onbeforeunload = function () {
               <IcTimer class="inline-block mr-5" />
               <label> Duration: 
                <span v-if="isEdit==false">{{ selectedEvent.eventDuration }} mins</span>
-               <span v-else><input type="text" :placeholder="selectedEvent.eventDuration"
-                    class="input input-bordered input-secondary w-84 max-w-xs self-center" disabled
+               <span v-else><input type="text" v-model="selectedEvent.eventDuration"
+                    class="input input-bordered input-secondary w-84 max-w-xs self-center text-lg" disabled
                   id="duration" /></span>
               </label> 
-            </p>
-            <br />
-            <p v-if="selectedEvent.eventNotes != ''">
-
-              <IcNote class="inline-block mr-5" />
-              <label for="notes">
-                Notes: 
-              </label>
-            <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes }}</p>
-            <p>
-              <span class="text-sm text-red-500 pb-2" v-show="editNote.length == 500" >* A notes length must be 1 - 500 character.</span>
-              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
-                class="textarea textarea-secondary text-lg w-full overflow-auto "
-                maxlength="500"></textarea>
-                  <label class="label">
-                    <span class="label-text-alt"></span>
-                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
-                  </label>
-                  </p>
-            </p>
-            <p v-else>
-              <IcNote class="inline-block mr-5" />
-              <label for="notes">
-                Notes: 
-              </label>
-            <p v-show="!isEdit" class="inline-block">NO MESSAGE</p>
-            <p>
-              <span class="text-sm text-red-500 pb-2" v-show="editNote.length==500" >* A notes length must be 1 - 500 character.</span>
-              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
-                class="textarea textarea-secondary text-lg w-full overflow-auto "
-                maxlength="500"></textarea>
-                  <label class="label">
-                    <span class="label-text-alt"></span>
-                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
-                  </label>
-                </p>
             </p>
             <br />
             <p>
@@ -260,7 +216,53 @@ window.onbeforeunload = function () {
             <input v-show="isEdit" type="datetime-local"
               class="input input-bordered input-secondary w-auto max-w-xs text-lg" id="starttime" v-model="editDate" :min="currentTime"/>
             </p>
-              <span class="text-sm text-red-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">* Start time must be in the future.</span>
+              <span class="text-sm text-yellow-500 pb-2 inline-block" v-show="compareDate(editDate,currentTime)">** Start time must be in the future.</span>
+            <br/>
+            <p>
+              <IcEmail class="inline-block mr-5 " />
+              <label> Email: 
+               <span v-if="isEdit==false">{{ selectedEvent.bookingEmail }}</span>
+               <span v-else><input type="text" v-model="selectedEvent.bookingEmail"
+                    class="input input-bordered input-secondary w-full max-w-xs self-center text-lg" disabled
+                  id="duration" /></span>
+              </label> 
+            </p>
+            <br />
+            <p>
+              <IcNote class="inline-block mr-5" />
+              <label for="notes">
+                Notes: 
+              </label>
+            <p v-if="selectedEvent.eventNotes !=''" v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes }}</p>
+            <p v-else v-show="!isEdit" class="inline-block">NO MESSAGE.</p>
+            <p>
+              <span class="text-sm text-yellow-500 pb-2" v-show="editNote.length == 500" >** A notes length must be 1 - 500 character.</span>
+              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
+                class="textarea textarea-secondary text-xl w-full overflow-auto mt-3"
+                maxlength="500"></textarea>
+                  <label class="label">
+                    <span class="label-text-alt"></span>
+                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
+                  </label>
+                  </p>
+            </p>
+            <!-- <p v-else>
+              <IcNote class="inline-block mr-5" />
+              <label for="notes">
+                Notes: 
+              </label>
+            <p v-show="!isEdit" class="inline-block">NO MESSAGE</p>
+            <p>
+              <span class="text-sm text-yellow-500 " v-show="editNote.length==500" >** A notes length must be 1 - 500 character.</span>
+              <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
+                class="in textarea textarea-secondary text-lg w-full overflow-auto mt-3 "
+                maxlength="500"></textarea>
+                  <label class="label">
+                    <span class="label-text-alt"></span>
+                    <span class="label-text-alt" v-show="isEdit">{{editNote.length}}/500</span>
+                  </label>
+                </p>
+            </p> -->
           </div>
           <div class="card-actions justify-end m-5">
             <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>

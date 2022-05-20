@@ -21,6 +21,7 @@
       </router-link>
       </div>
       <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg">Booking</router-link>
+      <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">Event Category</router-link>
       <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
     </div>
     <router-view></router-view>

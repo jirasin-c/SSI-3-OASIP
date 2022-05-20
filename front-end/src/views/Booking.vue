@@ -19,10 +19,14 @@ const currentTime = ref(null)
 const isPast = ref(false)
 const isOverlapped = ref(false)
 const isNotEmail = ref(false)
+const alertText = ref('')
 
 onUpdated(() => {
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+((new Date().getMinutes()+1))
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+(String(new Date().getMinutes()+1).padStart(2,'0'))
     // console.log(currentTime.value);
+    // console.log(startTime.value);
+    // const d = String(new Date().getMinutes())
+    // console.log(d.padStart(2,'0'));
     eventCategory.value.filter((findID) => {
         if (findID.eventCategoryName === selectedCategory.value) {
             categoryID.value = findID.id
@@ -40,7 +44,7 @@ onUpdated(() => {
 onBeforeMount(async () => {
     await getEventCategory()
     await getEvents()
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+((new Date().getMinutes()+1))
+    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+(String(new Date().getMinutes()+1).padStart(2,'0'))
     // currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
 })
 
@@ -135,10 +139,35 @@ const createEvent = async () => {
            }
        }
     })
+    if (startTime.value == '') {
+            startTime.value = null
+        }
+    // console.log(startTime.value);
     if (name.value == '' || email.value == '' || startTime.value == null ) {
-
+        alertText.value = ''
+        //  console.log(startTime.value);
         startTime.value = startTime.value
+        //  console.log(startTime.value);
         falseInput.value = true 
+
+        if(name.value == ''){
+            if (email.value != '') {
+            alertText.value += ("name, ")
+            }else{
+                alertText.value += ("name, ")
+            }
+        }
+        if(email.value == ''){
+            if (startTime.value != null ) {
+                alertText.value += ("email ")
+            }else{
+                alertText.value += ("email, ") 
+            }
+        }
+        if (startTime.value == null) {
+            alertText.value += ("start time ")
+        }
+
         return 
     }
 
@@ -153,41 +182,41 @@ const createEvent = async () => {
         return
     }  
 
-        if (name.value.length==100 || notes.value.length==500 ) {
-            startTime.value = startTime.value
-            alert("Field longer string can't be event.")
-        }else{
+        // if (name.value.length == 100 || notes.value.length == 500 || email.value.length == 100 ) {
+        //     startTime.value = startTime.value
+        //     alert("Field longer string can't be event.")
+        // }else{
             if (isNotEmail.value == false) {
                 falseInput.value = false
                 if (confirm(`Are you sure to the create the event ?`)) {
-                    // const utc = new Date(startTime.value).toISOString()
-                    // startTime.value = utc
-                    // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'content-type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify({
-                    //         bookingName: name.value,
-                    //         bookingEmail: email.value,
-                    //         eventStartTime: startTime.value,
-                    //         eventDuration: duration.value,
-                    //         eventNotes: notes.value,
-                    //         eventCategoryID: categoryID.value,
-                    //     })
-                    // })
-                    // if (res.status === 201) {
+                    const utc = new Date(startTime.value).toISOString()
+                    startTime.value = utc
+                    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            bookingName: name.value,
+                            bookingEmail: email.value,
+                            eventStartTime: startTime.value,
+                            eventDuration: duration.value,
+                            eventNotes: notes.value,
+                            eventCategoryID: categoryID.value,
+                        })
+                    })
+                    if (res.status === 200) {
+                        startTime.value = null
                         alert("Event created successfully")
-                    //     appRouter.push({ name: 'Home' })
-                    // } else {
-                    //     alert("Event can't created")
-                    // }     
+                        appRouter.push({ name: 'Home' })
+                    } else {
+                        alert("Event can't created")
+                    }     
                 }
             }else{
                 alert("Invalid email address!");
                 return
             }
-        }
 }
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
@@ -231,8 +260,8 @@ const getEvents = async () =>{
                                         Duration:
                                     </span>
                                 </label>
-                                <input type="text" :placeholder="duration"
-                                    class="input input-bordered input-secondary w-full max-w-xs " disabled
+                                <input type="text" v-model="duration"
+                                    class="input input-bordered input-secondary w-full max-w-xs text-gray-50" disabled
                                     id="duration" />
                                 <label for="starttime" class="label">
                                     <span class="label-text text-base font-semibold">
@@ -249,7 +278,7 @@ const getEvents = async () =>{
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-red-500 pb-2" v-show="name.length==100">A name must be 1 - 100 characters.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1 - 100 characters. **</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
                                     id="name" maxlength="100"/>
@@ -263,15 +292,20 @@ const getEvents = async () =>{
                                     </span>
                                 </label>
                                 <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email address.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** An email must be 1 - 100 characters. **</span>
                                 <input type="email" placeholder="example@mail.kmutt.ac.th"
                                     class="input input-bordered input-secondary w-full max-w-xs  text-lg"
-                                    v-model="email" id="email"/>
+                                    v-model="email" id="email" maxlength="100"/>
+                                <label class="label">
+                                    <span class="label-text-alt"></span>
+                                    <span class="label-text-alt">{{email.length}}/100</span>
+                                </label>
                                 <label for="notes" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Notes :
                                     </span>
                                 </label>
-                                <span class="text-sm text-red-500 pb-2" v-show="notes.length==500" >A notes must be 1 - 500 characters.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500" >** A notes must be 1 - 500 characters. **</span>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
                                     placeholder="Type something..." maxlength="500"></textarea>
@@ -281,14 +315,14 @@ const getEvents = async () =>{
                                 </label>
                             </div>
                         </div>
-                        <div class="alert alert-error shadow-lg w-72 h-12 text-[16px] text-white self-center" v-show="falseInput">
+                        <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-show="falseInput">
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
                                     fill="none" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Please fill the required field.</span>
+                                <span>Please fill {{alertText}} field.</span>
                             </div>
                         </div>
                         <div class="card-actions justify-center">
