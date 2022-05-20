@@ -31,13 +31,8 @@ public class Event {
 
 
     @NotNull(message = "Start time must not be null")
-<<<<<<< HEAD
-    @FutureOrPresent(message = "Start time must be a future date")
-    @JsonFormat(timezone = "UTC")
-=======
     @JsonFormat( timezone = "Asia/Bangkok")
     @Future(message = "Start time must be a future date")
->>>>>>> b32834345c973baea7deabe4ff5fc8dbd869ed90
     @Column(name = "eventStartTime", nullable = false)
     private Date eventStartTime;
 
