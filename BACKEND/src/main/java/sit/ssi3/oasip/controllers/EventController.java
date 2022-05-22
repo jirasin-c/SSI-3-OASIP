@@ -34,14 +34,14 @@ public class EventController {
     }
 
     @GetMapping("/upComing")
-    public  List<EventDTO> getEventUpComing(){
-        return eventService.getEventUpComing();
+    public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+        return eventService.getEventUpComing(sortBy);
     }
 
 
     @GetMapping("/past")
-    public  List<EventDTO> getEventPast(){
-        return eventService.getEventPast();
+    public  List<EventDTO> getEventPast(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+        return eventService.getEventPast(sortBy);
     }
 
     @PostMapping("")

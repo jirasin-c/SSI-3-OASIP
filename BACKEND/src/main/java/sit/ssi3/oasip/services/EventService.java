@@ -55,10 +55,10 @@ public class EventService {
         return modelMapper.map(event, EventDTO.class);
     }
 
-    public List<EventDTO> getEventUpComing() {
+    public List<EventDTO> getEventUpComing(String sortBy) {
         Date currentDate = new Date();
         // find all event
-        List<Event> eventList = eventRepository.findAll();
+        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
         System.out.println(eventList);
 
         // check event
@@ -93,10 +93,10 @@ public class EventService {
     }
 
 
-    public List<EventDTO> getEventPast() {
+    public List<EventDTO> getEventPast(String sortBy) {
         Date currentDate = new Date();
         // find all event
-        List<Event> eventList = eventRepository.findAll();
+        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
         System.out.println(eventList);
 
         // check event
