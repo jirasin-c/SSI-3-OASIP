@@ -33,6 +33,12 @@ public class EventController {
         return eventService.getEventByCategoryId(eventCatecoryId);
     }
 
+    @GetMapping("/upComing")
+    public  List<EventDTO> getEventUpComing(){
+        return eventService.getEventUpComing();
+    }
+
+
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest newEvent) {

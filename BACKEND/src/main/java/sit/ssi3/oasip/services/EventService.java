@@ -47,13 +47,51 @@ public class EventService {
     }
 
     public EventDTO getEventById(Integer id) {
-        Event event= eventRepository.findById(id).orElseThrow(() ->
+        Event event = eventRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Event ID " + id + "Does not Exits"
                 )
         );
         return modelMapper.map(event, EventDTO.class);
     }
+
+    public List<EventDTO> getEventUpComing() {
+        Date currentDate = new Date();
+        // find all event
+        List<Event> eventList = eventRepository.findAll();
+        System.out.println(eventList);
+
+        // check event
+
+    eventList = eventList.stream().filter(oldEvent -> {
+        Date startTime = new Date(oldEvent.getEventStartTime().getTime());
+//        System.out.println("D : " + currentDate);
+//        System.out.println("S : " + startTime);
+//
+//        int result = currentDate.compareTo(startTime);
+//        System.out.println("result : " + result);
+//
+//        if (result == 0) {
+//            System.out.println("Date1 is equal to Date2");
+//        } else if (result > 0) {
+//            System.out.println("Date1 is after Date2");
+//        } else if (result < 0) {
+//            System.out.println("Date1 is before Date2");
+//        } else {
+//            System.out.println("How to get here?");
+//        }
+
+        if (currentDate.compareTo(startTime) <= 0) {
+            return true;
+        }
+        return false;
+    }).collect(Collectors.toList());
+        System.out.println("L : " + eventList);
+
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+    }
+
 
     public Event createEvent(CreateEventRequest newEvent) {
         // map event dto request to event
@@ -75,17 +113,18 @@ public class EventService {
             // check event overlapped
             eventList = eventList.stream().filter(oldEvent -> {
                 Date startTime = new Date(oldEvent.getEventStartTime().getTime());
-                System.out.println("StartTime"+startTime);
+                System.out.println("StartTime" + startTime);
                 Date newEventStartTime = event.getEventStartTime();
-                System.out.println("NewStart"+newEventStartTime);
+                System.out.println("NewStart" + newEventStartTime);
                 Date endTime = new Date((startTime.getTime() + (oldEvent.getEventDuration() * 60000)));
-                System.out.println("EndTime"+endTime);
+                System.out.println("EndTime" + endTime);
                 Date newEventEndTime = new Date((newEventStartTime.getTime() + (event.getEventDuration() * 60000)));
 
-                System.out.println("NewEnd"+newEventEndTime);
-                Date now = new Date();
-                System.out.println(now);
-                if(((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0))
+//                System.out.println("NewEnd"+newEventEndTime);
+//                Date now = new Date();
+//                System.out.println(now);
+
+                if (((startTime.compareTo(newEventStartTime) <= 0) && (newEventStartTime.compareTo(endTime) < 0))
                         || ((startTime.compareTo(newEventEndTime) < 0) && (newEventEndTime.compareTo(endTime) <= 0))
                         || ((newEventStartTime.compareTo(startTime) < 0) && (endTime.compareTo(newEventEndTime) < 0))
                         || ((startTime.compareTo(newEventStartTime) < 0) && (newEventEndTime.compareTo(endTime) < 0))) {
@@ -147,7 +186,6 @@ public class EventService {
             existingEvent.setEventStartTime(updateEvent.getEventStartTime());
         return existingEvent;
     }
-
 
 
 }
