@@ -28,6 +28,11 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    @GetMapping("/filterCategory/{eventCatecoryId}")
+    public List<EventDTO> getEventByCategoryId(@PathVariable Integer eventCatecoryId){
+        return eventService.getEventByCategoryId(eventCatecoryId);
+    }
+
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest newEvent) {

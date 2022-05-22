@@ -134,6 +134,11 @@ public class EventService {
         return modelMapper.map(event, EventDTO.class);
     }
 
+    public List<EventDTO> getEventByCategoryId(Integer eventCatecoryId){
+        List<Event> eventList = eventRepository.findByEventCategoryID_Id(eventCatecoryId);
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+    }
+
     private Event mapEvent(Event existingEvent, Event updateEvent) {
         if (updateEvent.getEventNotes() != null)
             existingEvent.setEventNotes(updateEvent.getEventNotes());
@@ -142,6 +147,7 @@ public class EventService {
             existingEvent.setEventStartTime(updateEvent.getEventStartTime());
         return existingEvent;
     }
+
 
 
 }
