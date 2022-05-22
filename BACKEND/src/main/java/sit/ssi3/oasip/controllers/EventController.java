@@ -38,11 +38,16 @@ public class EventController {
         return eventService.getEventUpComing(sortBy);
     }
 
-
     @GetMapping("/past")
     public  List<EventDTO> getEventPast(@RequestParam(defaultValue = "eventStartTime") String sortBy){
         return eventService.getEventPast(sortBy);
     }
+
+    @PostMapping("/listDay")
+    public List<EventDTO> getListDay(@RequestBody Event listDateEvent){
+        return  eventService.getListDay(listDateEvent);
+    }
+
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
