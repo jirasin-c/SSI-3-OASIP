@@ -3,8 +3,8 @@ import Home from "../views/Home.vue";
 import Detail from "../views/Detail.vue";
 import Booking from "../views/Booking.vue"
 import EventCategory from "../views/EventCategory.vue"
-// const history = createWebHistory('/ssi3/');
-const history = createWebHistory();
+const history = createWebHistory('/ssi3/');
+// const history = createWebHistory();
 const routes = [
   {
     path: "/",

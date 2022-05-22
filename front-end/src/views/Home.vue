@@ -2,9 +2,11 @@
 import EventCard from "../components/EventCard.vue";
 import ShowSelectedEvent from "../components/ShowSelectedEvent.vue";
 import { useRouter } from 'vue-router';
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onUpdated, ref } from "vue";
 const appRouter = useRouter()
 const event = ref([]);
+const eventCategory = ref([])
+const selectCategory = ref('All category')
 const isEmpty = ref(false);
 
 const getEvent = async () => {
@@ -26,8 +28,34 @@ const getEvent = async () => {
   } else {
     isEmpty.value = false;
   }
+
+  console.log(event.value);
 };
 
+const getEventCategory = async () =>{
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
+  eventCategory.value = await res.json()
+  console.log(eventCategory.value);
+}
+
+const filterCategory = async (ev) =>{
+  const categoryId = ev.target.value
+  console.log(categoryId);
+  if (categoryId == 'All category') {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+    event.value = await res.json()
+  }else{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/filterCategory/${categoryId}`)
+    event.value = await res.json()
+  }
+  
+  if (event.value.length == 0) {
+    isEmpty.value = true;
+  } else {
+    isEmpty.value = false;
+  }
+
+}
 const getDetail = (id) => {
   // console.log(id);
   appRouter.push({ name: 'Detail', params: { bookingId: id.bookingId } })
@@ -48,8 +76,13 @@ const cancelEvent = async (id) => {
 }
 onBeforeMount(async () => {
   await getEvent();
+  await getEventCategory()
   // console.log(event.value);
 });
+
+// onUpdated(()=>{
+//   console.log(selectCategory.value);
+// })
 </script>
 
 <template>
@@ -58,6 +91,22 @@ onBeforeMount(async () => {
       <div
         class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
         CURRENT BOOKING</div>
+        <div class="flex items-center mt-2 justify-center">
+          <div class="w-2/3 shadow p-5 rounded-lg bg-slate-500 bg-opacity-40">
+            <div
+        class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+        Filter</div>
+            <div class="grid grid-cols-3 justify-item-center ">
+              <select class="select select-bordered w-2/4 max-w-xs" name="" id="" v-model="selectCategory" @change="filterCategory">
+                <option selected>All category</option>
+                <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option>
+                <!-- <option value="" selected>All category</option>
+                <option value="" >Client-side</option>
+                <option value="" >All category</option> -->
+              </select>
+            </div>
+          </div>
+        </div>
     </div>
     <div class="flex flex-row h-screen">
       <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
