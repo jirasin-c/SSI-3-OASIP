@@ -39,6 +39,11 @@ public class EventController {
     }
 
 
+    @GetMapping("/past")
+    public  List<EventDTO> getEventPast(){
+        return eventService.getEventPast();
+    }
+
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest newEvent) {

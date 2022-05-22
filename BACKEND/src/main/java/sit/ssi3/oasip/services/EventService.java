@@ -93,6 +93,43 @@ public class EventService {
     }
 
 
+    public List<EventDTO> getEventPast() {
+        Date currentDate = new Date();
+        // find all event
+        List<Event> eventList = eventRepository.findAll();
+        System.out.println(eventList);
+
+        // check event
+        eventList = eventList.stream().filter(oldEvent -> {
+            Date startTime = new Date(oldEvent.getEventStartTime().getTime());
+//        System.out.println("D : " + currentDate);
+//        System.out.println("S : " + startTime);
+//
+//        int result = currentDate.compareTo(startTime);
+//        System.out.println("result : " + result);
+//
+//        if (result == 0) {
+//            System.out.println("Date1 is equal to Date2");
+//        } else if (result > 0) {
+//            System.out.println("Date1 is after Date2");
+//        } else if (result < 0) {
+//            System.out.println("Date1 is before Date2");
+//        } else {
+//            System.out.println("How to get here?");
+//        }
+
+            if (currentDate.compareTo(startTime) == 1) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        System.out.println("L : " + eventList);
+
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+    }
+
+
     public Event createEvent(CreateEventRequest newEvent) {
         // map event dto request to event
         Event event = new Event();
