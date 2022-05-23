@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `event`;
 CREATE TABLE `event` (
   `eventID` int NOT NULL AUTO_INCREMENT,
   `bookingName` varchar(100) NOT NULL,
-  `bookingEmail` varchar(255) NOT NULL,
+  `bookingEmail` varchar(100) NOT NULL,
   `eventStartTime` datetime NOT NULL,
   `eventDuration` int NOT NULL,
   `eventNotes` varchar(500) DEFAULT NULL,
