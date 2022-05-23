@@ -219,7 +219,7 @@ const createEvent = async () => {
             }
 }
 const getEventCategory = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`)
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }

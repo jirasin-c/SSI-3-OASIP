@@ -50,7 +50,7 @@ const getEvents = async() =>{
   // console.log(events.value);
 }
 const getEventCategory = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-category/getCategoryName?eventCategoryName=${selectedEvent.value.eventCategoryName}`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories/categoryName?categoryName=${selectedEvent.value.eventCategoryName}`)
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }
