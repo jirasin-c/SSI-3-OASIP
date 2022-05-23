@@ -10,6 +10,7 @@ import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.request.CreateEventRequest;
 import sit.ssi3.oasip.services.EventService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -28,24 +29,24 @@ public class EventController {
         return eventService.getEventById(eventId);
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<EventDTO> getEventByCategoryId(@RequestParam("categoryId") Integer categoryId){
         return eventService.getEventByCategoryId(categoryId);
     }
 
     @GetMapping("/upComing")
-    public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+    public  List<EventDTO> getEventUpComing(@RequestParam("eventStartTime") String sortBy){
         return eventService.getEventUpComing(sortBy);
     }
 
     @GetMapping("/past")
-    public  List<EventDTO> getEventPast(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+    public  List<EventDTO> getEventPast(@RequestParam("eventStartTime") String sortBy){
         return eventService.getEventPast(sortBy);
     }
 
-    @PostMapping("/day")
-    public List<EventDTO> getListDay(@RequestBody Event listDateEvent,@RequestParam(defaultValue = "eventStartTime") String sortBy){
-        return  eventService.getListDay(listDateEvent,sortBy);
+    @GetMapping("/day")
+    public List<EventDTO> getListDay(@RequestParam("dateEvent") Date dateEvent, @RequestParam("eventStartTime") String sortBy){
+        return  eventService.getListDay(dateEvent,sortBy);
     }
 
     @PostMapping("")

@@ -19,7 +19,6 @@ import java.util.List;
 public class EventCategoryService {
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
-
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -27,6 +26,7 @@ public class EventCategoryService {
 
     public List<EventcategoryDTO> getEventCategory(String sortBy) {
         List<Eventcategory> eventCategoryList = eventCategoryRepository.findAll(Sort.by(sortBy).descending());
+        //Exception handling
         if (eventCategoryList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event category not found");
         return listMapper.mapList(eventCategoryList, EventcategoryDTO.class, modelMapper);
     }
@@ -34,6 +34,7 @@ public class EventCategoryService {
     
     public EventcategoryDTO getEventCategoryByName(String categoryName) {
         Eventcategory eventcategory = eventCategoryRepository.findByEventCategoryNameEquals(categoryName);
+        //Exception handling
         if (eventcategory == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event category not found");
         return modelMapper.map(eventcategory, EventcategoryDTO.class);
 

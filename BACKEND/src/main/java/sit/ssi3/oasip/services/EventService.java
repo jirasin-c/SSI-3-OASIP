@@ -56,6 +56,13 @@ public class EventService {
         return modelMapper.map(event, EventDTO.class);
     }
 
+    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
+        List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
+        //Exception handling
+        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+    }
+
     public List<EventDTO> getEventUpComing(String sortBy) {
         Date currentDate = new Date();
         // find all event
@@ -77,47 +84,46 @@ public class EventService {
 
     public List<EventDTO> getEventPast(String sortBy) {
         Date currentDate = new Date();
-        // find all event
+
+        //Find all event
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
 
-        // check event
-        eventList = eventList.stream().filter(oldEvent -> {
-            Date startTime = new Date(oldEvent.getEventStartTime().getTime());
+        //Check event
+        eventList = eventList.stream().filter(allEvent -> {
+            Date allStartTime = new Date(allEvent.getEventStartTime().getTime());
 
-            if (currentDate.compareTo(startTime) == 1) {
+            if (currentDate.compareTo(allStartTime) == 1) {
                 return true;
             }
             return false;
         }).collect(Collectors.toList());
+
+        //Exception handling
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
         return listMapper.mapList(eventList, EventDTO.class, modelMapper);
 
     }
 
-    public List<EventDTO> getListDay(Event dateEvent, String sortBy) {
+    public List<EventDTO> getListDay(Date dateEvent, String sortBy) {
+        if (dateEvent == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "dateEvent is null");
+        System.out.println("kuy : " + dateEvent);
+        Date specifiedDate = new Date(dateEvent.getTime());
+        System.out.println("hee : " + specifiedDate);
+        // find all event
+        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
 
-        if (dateEvent.getEventStartTime() != null) {
-            Date specifiedDate = new Date(dateEvent.getEventStartTime().getTime());
+        // check event
+        eventList = eventList.stream().filter(allEvent -> {
+            Date allStartTime = new Date(allEvent.getEventStartTime().getTime());
+            return specifiedDate.compareTo(allStartTime) == 0;
+        }).collect(Collectors.toList());
 
-            // find all event
-            List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
-
-            // check event
-            eventList = eventList.stream().filter(oldEvent -> {
-                Date startTime = new Date(oldEvent.getEventStartTime().getTime());
-
-                if (specifiedDate.compareTo(startTime) == 0) {
-                    return true;
-                }
-                return false;
-            }).collect(Collectors.toList());
-            if (dateEvent.getEventStartTime() == null)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EventStartTime is null");
-            if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-            return listMapper.mapList(eventList, EventDTO.class, modelMapper);
-        }
-        return null;
+        //Exception handling
+        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
     }
+
 
     public Event createEvent(CreateEventRequest newEvent) {
         // map event dto request to event
@@ -153,7 +159,6 @@ public class EventService {
             }).collect(Collectors.toList());
 
         }
-
         // check overlapped
         if (eventList.size() > 0 && newEvent.getEventStartTime() != null && event.getEventDuration() != null) {
             event.setOverlapped(true);
@@ -176,7 +181,6 @@ public class EventService {
     }
 
     public EventDTO updateEvent(EventEditDTO updateEvent, Integer eventId) {
-
         Event newEvent = modelMapper.map(updateEvent, Event.class);
         Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
@@ -191,12 +195,6 @@ public class EventService {
         // return when error message contains
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
         return modelMapper.map(event, EventDTO.class);
-    }
-
-    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
-        List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
-        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
     }
 
     private Event mapEvent(Event existingEvent, Event updateEvent) {
