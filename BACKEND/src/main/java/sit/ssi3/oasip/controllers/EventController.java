@@ -1,6 +1,7 @@
 package sit.ssi3.oasip.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,17 +36,17 @@ public class EventController {
     }
 
     @GetMapping("/upComing")
-    public  List<EventDTO> getEventUpComing(@RequestParam("eventStartTime") String sortBy){
+    public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy){
         return eventService.getEventUpComing(sortBy);
     }
 
     @GetMapping("/past")
-    public  List<EventDTO> getEventPast(@RequestParam("eventStartTime") String sortBy){
+    public  List<EventDTO> getEventPast(@RequestParam(defaultValue ="eventStartTime") String sortBy){
         return eventService.getEventPast(sortBy);
     }
 
     @GetMapping("/day")
-    public List<EventDTO> getListDay(@RequestParam("dateEvent") Date dateEvent, @RequestParam("eventStartTime") String sortBy){
+    public List<EventDTO> getListDay(@RequestParam("dateEvent") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateEvent, @RequestParam(defaultValue = "eventStartTime") String sortBy){
         return  eventService.getListDay(dateEvent,sortBy);
     }
 

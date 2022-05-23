@@ -15,7 +15,7 @@ public class EventCategoryController {
     private EventCategoryService eventCategoryService;
 
     @GetMapping("")
-    public List<EventcategoryDTO> getEventCategory(@RequestParam("id") String sortBy){
+    public List<EventcategoryDTO> getEventCategory(@RequestParam(defaultValue = "id") String sortBy){
         return eventCategoryService.getEventCategory(sortBy);
     }
 
