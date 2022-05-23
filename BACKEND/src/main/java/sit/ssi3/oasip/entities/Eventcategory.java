@@ -1,7 +1,10 @@
 package sit.ssi3.oasip.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
+@Data
 @Table(name = "eventcategory", indexes = {
         @Index(name = "eventCategoryName_UNIQUE", columnList = "eventCategoryName", unique = true)
 })
@@ -20,35 +23,4 @@ public class Eventcategory {
     @Column(name = "eventDuration", nullable = false)
     private Integer eventDuration;
 
-    public Integer getEventDuration() {
-        return eventDuration;
-    }
-
-    public void setEventDuration(Integer eventDuration) {
-        this.eventDuration = eventDuration;
-    }
-
-    public String getEventCategoryDescription() {
-        return eventCategoryDescription;
-    }
-
-    public void setEventCategoryDescription(String eventCategoryDescription) {
-        this.eventCategoryDescription = eventCategoryDescription;
-    }
-
-    public String getEventCategoryName() {
-        return eventCategoryName;
-    }
-
-    public void setEventCategoryName(String eventCategoryName) {
-        this.eventCategoryName = eventCategoryName;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 }

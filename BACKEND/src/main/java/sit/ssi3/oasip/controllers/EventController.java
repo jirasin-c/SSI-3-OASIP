@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
-    //Service layer
     @Autowired
     private EventService eventService;
 
@@ -23,14 +22,15 @@ public class EventController {
     public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
         return eventService.getEvent(sortBy);
     }
-    @GetMapping("/{id}")
-    public EventDTO getEventByID(@PathVariable Integer id){
-        return eventService.getEventById(id);
+
+    @GetMapping("/{eventId}")
+    public EventDTO getEventByID(@PathVariable Integer eventId){
+        return eventService.getEventById(eventId);
     }
 
-    @GetMapping("/filterCategory/{eventCatecoryId}")
-    public List<EventDTO> getEventByCategoryId(@PathVariable Integer eventCatecoryId){
-        return eventService.getEventByCategoryId(eventCatecoryId);
+    @GetMapping("")
+    public List<EventDTO> getEventByCategoryId(@RequestParam("categoryId") Integer categoryId){
+        return eventService.getEventByCategoryId(categoryId);
     }
 
     @GetMapping("/upComing")
@@ -43,11 +43,10 @@ public class EventController {
         return eventService.getEventPast(sortBy);
     }
 
-    @PostMapping("/listDay")
-    public List<EventDTO> getListDay(@RequestBody Event listDateEvent){
-        return  eventService.getListDay(listDateEvent);
+    @PostMapping("/day")
+    public List<EventDTO> getListDay(@RequestBody Event listDateEvent,@RequestParam(defaultValue = "eventStartTime") String sortBy){
+        return  eventService.getListDay(listDateEvent,sortBy);
     }
-
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
@@ -56,14 +55,14 @@ public class EventController {
         return new ResponseEntity<Event>(newEventSaved, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{eventID}")
-    public void cancelEvent(@PathVariable Integer eventID){
-        eventService.cancelEvent(eventID);
+    @DeleteMapping("/{eventId}")
+    public void cancelEvent(@PathVariable Integer eventId){
+        eventService.cancelEvent(eventId);
     }
 
-    @PutMapping("/{id}")
-    public EventDTO updateEvent(@RequestBody EventEditDTO updateEvent, @PathVariable Integer id) {
-        return eventService.updateEvent(updateEvent, id);
+    @PutMapping("/{eventId}")
+    public EventDTO updateEvent(@RequestBody EventEditDTO updateEvent, @PathVariable Integer eventId) {
+        return eventService.updateEvent(updateEvent, eventId);
 
     }
 
