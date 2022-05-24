@@ -18,6 +18,11 @@ const startTime = ref()
 const filterType = ref("Select type")
 
 const getEvent = async () => {
+  isFindeNoByCategory.value = false
+  isFindeNoByUpComing.value = false;
+  isFindeNoByPass.value = false
+  isFindeNoByDate.value = false
+  isEmpty.value = false
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`);
   event.value = await res.json();
   
@@ -175,9 +180,18 @@ const resetFilter = ()=>{
   // if (filterType.value == 'Category') {
   //   console.log('cate');
   // }
+  // filterType.value = 'Select type'
   selectCategory.value = "Select category"
   categoryStatus.value = "Select status"
   startTime.value = null
+}
+
+const clearFilter = async()=>{
+  filterType.value = 'Select type'
+  selectCategory.value = "Select category"
+  categoryStatus.value = "Select status"
+  startTime.value = null
+  await getEvent()
 }
 
 const getDetail = (id) => {
@@ -218,29 +232,29 @@ onUpdated(()=>{
       <div
         class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
         CURRENT BOOKING</div>
-        <div class="flex items-center mt-2 justify-center">
-          <div class="w-2/3 shadow p-5 rounded-lg bg-slate-500 bg-opacity-40">
+        <div class="flex items-center mt-8 justify-end mr-16">
+          <div class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
             <div
-        class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-        Filter by 
+        class="text-2xl font-extrabold m-2">
+        Filter by
               </div>
-        <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="filterType" @change="resetFilter">
+        <select class="select select-bordered w-36 max-w-xs mr-1" name="" id="" v-model="filterType" @change="resetFilter">
                 <option select disabled>Select type</option>
                 <option>Category</option>
                 <option>Event status</option>
                 <option>Date</option>
               </select>              
 
-            <div class="grid grid-cols-1 justify-item-center ">
-              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="selectCategory" @change="filterCategory" v-show="filterType =='Category' ">
-                <option disabled selected>Select category</option>
-                <option>All category</option>
+            <div class="mr-1">
+              <select class="select select-bordered w-full max-w-xs mr-1" name="" id="" v-model="selectCategory" @change="filterCategory" v-show="filterType =='Category' ">
+                <option selected disabled>Select category</option>
+                <option selected>All category</option>
                 <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option>
                 <!-- <option value="" selected>All category</option>
                 <option value="" >Client-side</option>
                 <option value="" >All category</option> -->
               </select>
-              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategoryStatus" v-show="filterType =='Event status'">
+              <select class="select select-bordered w-full max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategoryStatus" v-show="filterType =='Event status'">
                 <option disabled selected>Select status</option>
                 <option>Up coming</option>
                 <option>Past</option>
@@ -249,9 +263,10 @@ onUpdated(()=>{
                 <option value="" >Client-side</option>
                 <option value="" >All category</option> -->
               </select>
-              <input type="date" class="input input-bordered w-3/5 max-w-xs text-lg"
+              <input type="date" class="input input-bordered w-full max-w-xs text-lg"
                   v-model="startTime" id="starttime" @change="filterDay" v-show="filterType =='Date'">
             </div>
+            <button class="btn btn-secondary" v-show="filterType !== 'Select type'" @click="clearFilter">CLEAR</button>
           </div>
         </div>
     </div>
