@@ -8,9 +8,10 @@ const event = ref([]);
 const eventFilter =ref([])
 const eventCategory = ref([])
 const selectCategory = ref('All category')
-const categoryStatus = ref('Event status')
+const categoryStatus = ref('Status')
 const isEmpty = ref(false);
 const startTime = ref()
+const filterType = ref("Select type")
 
 const getEvent = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`);
@@ -268,7 +269,8 @@ onBeforeMount(async () => {
 
 onUpdated(()=>{
   // console.log(selectCategory.value);
-  console.log(startTime.value);
+  // console.log(startTime.value);
+  // console.log(filterType.value);
 })
 </script>
 
@@ -282,17 +284,25 @@ onUpdated(()=>{
           <div class="w-2/3 shadow p-5 rounded-lg bg-slate-500 bg-opacity-40">
             <div
         class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-        Filter</div>
-            <div class="grid grid-cols-4 justify-item-center ">
-              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="selectCategory" @change="filterCategory">
+        Filter by 
+              </div>
+        <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="filterType">
+                <option select disabled>Select type</option>
+                <option>Category</option>
+                <option>Event status</option>
+                <option>Date</option>
+              </select>              
+
+            <div class="grid grid-cols-1 justify-item-center ">
+              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="selectCategory" @change="filterCategory" v-show="filterType =='Category' ">
                 <option selected>All category</option>
                 <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option>
                 <!-- <option value="" selected>All category</option>
                 <option value="" >Client-side</option>
                 <option value="" >All category</option> -->
               </select>
-              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategory">
-                <option disabled selected>Event status</option>
+              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategory" v-show="filterType =='Event status'">
+                <option disabled selected>Status</option>
                 <option>Up coming</option>
                 <option>Past</option>
                 <!-- <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option> -->
@@ -301,9 +311,7 @@ onUpdated(()=>{
                 <option value="" >All category</option> -->
               </select>
               <input type="date" class="input input-bordered w-3/5 max-w-xs text-lg"
-                  v-model="startTime" id="starttime" @change="filterDay">
-
-              <button class="btn btn-primary w-2/4 justify-item-end">Reset filter</button>
+                  v-model="startTime" id="starttime" @change="filterDay" v-show="filterType =='Date'">
             </div>
           </div>
         </div>
