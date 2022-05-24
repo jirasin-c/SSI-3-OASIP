@@ -11,7 +11,7 @@ import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.repositories.EventRepository;
-import sit.ssi3.oasip.request.CreateEventRequest;
+import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.validation.ConstraintViolation;
@@ -129,7 +129,7 @@ public class EventService {
     }
 
 
-    public Event createEvent(CreateEventRequest newEvent) {
+    public Event createEvent(CreateEventDTO newEvent) {
         // map event dto request to event
         Event event = new Event();
         event.setId(null);

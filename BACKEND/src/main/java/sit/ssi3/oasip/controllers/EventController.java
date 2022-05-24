@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
-import sit.ssi3.oasip.request.CreateEventRequest;
+import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.services.EventService;
 
 import java.util.Date;
@@ -52,7 +52,7 @@ public class EventController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest newEvent) {
+    public ResponseEntity<Event> createEvent(@RequestBody CreateEventDTO newEvent) {
         Event newEventSaved = eventService.createEvent(newEvent);
         return new ResponseEntity<Event>(newEventSaved, HttpStatus.OK);
     }
