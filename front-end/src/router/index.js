@@ -17,12 +17,12 @@ const routes = [
     component: Detail,
   },
   {
-    path: "/booking/",
+    path: "/bookings/",
     name: "Booking",
     component: Booking,
   },
   {
-    path: "/event-category/",
+    path: "/categories/",
     name: "EventCategory",
     component: EventCategory,
   },

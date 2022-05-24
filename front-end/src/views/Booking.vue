@@ -10,6 +10,7 @@ const startTime = ref(null)
 const name = ref('')
 const categoryID = ref()
 const falseInput = ref(false)
+const success = ref(false)
 const email = ref('')
 const notes = ref('')
 const duration = ref()
@@ -188,6 +189,10 @@ const createEvent = async () => {
         // }else{
             if (isNotEmail.value == false) {
                 falseInput.value = false
+                console.log(startTime.value);
+                const utc = new Date(startTime.value).toISOString()
+                startTime.value = utc
+                console.log(startTime.value);
                 if (confirm(`Are you sure to the create the event ?`)) {
                     const utc = new Date(startTime.value).toISOString()
                     startTime.value = utc
@@ -207,8 +212,13 @@ const createEvent = async () => {
                     })
                     if (res.status === 200) {
                         startTime.value = null
-                        alert("Event created successfully")
-                        appRouter.push({ name: 'Home' })
+                        name.value = ''
+                        email.value = ''
+                        notes.value = ''
+                        // alert("Event created successfully")
+                        success.value = true
+                        setTimeout(()=>appRouter.push({ name: 'Home' }),1000)
+                        // appRouter.push({ name: 'Home' })
                     } else {
                         alert("Event can't created")
                     }     
@@ -323,6 +333,16 @@ const getEvents = async () =>{
                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <span>Please fill {{alertText}} field.</span>
+                            </div>
+                        </div>
+                        <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center" v-show="success">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Create event success.</span>
                             </div>
                         </div>
                         <div class="card-actions justify-center">

@@ -7,9 +7,13 @@ const appRouter = useRouter()
 const event = ref([]);
 const eventFilter =ref([])
 const eventCategory = ref([])
-const selectCategory = ref('All category')
-const categoryStatus = ref('Status')
-const isEmpty = ref(false);
+const selectCategory = ref('Select category')
+const categoryStatus = ref('Select status')
+const isEmpty = ref(false)
+const isFindeNoByCategory = ref(false)
+const isFindeNoByUpComing = ref(false)
+const isFindeNoByPass = ref(false)
+const isFindeNoByDate = ref(false)
 const startTime = ref()
 const filterType = ref("Select type")
 
@@ -17,7 +21,7 @@ const getEvent = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`);
   event.value = await res.json();
   
-    if (res.status == 404) {
+  if (res.status == 404) {
     isEmpty.value = true;
     event.value = []
   } else {
@@ -35,25 +39,24 @@ const getEvent = async () => {
     });
     e.eventStartTime = localDate;
   });
-  // if (event.value.length == 0) {
 
-
-  console.log(event.value);
-};
+}
 
 const getEventCategory = async () =>{
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`)
   eventCategory.value = await res.json()
-  console.log(eventCategory.value);
 }
 
 const filterCategory = async (ev) =>{
-  console.log(selectCategory.value);
-  // const categoryId = ev.target.value
-  // console.log(categoryId);
+  isFindeNoByCategory.value = false
+  isFindeNoByUpComing.value = false;
+  isFindeNoByPass.value = false
+  isFindeNoByDate.value = false
+  isEmpty.value = false
   if (selectCategory.value == 'All category') {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
     event.value = await res.json()
+    isFindeNoByCategory.value = false
     console.log(eventFilter.value);
     event.value.filter((e) => {
     const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
@@ -65,180 +68,118 @@ const filterCategory = async (ev) =>{
       minute: "numeric",
     });
     e.eventStartTime = localDate;
-  });
+    });
   }else{
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/?categoryId=${selectCategory.value}`)
     if (res.status == 404) {
-      isEmpty.value = true;
+      isFindeNoByCategory.value = true;
       event.value = []
     }else{
+      isFindeNoByCategory.value = false;
       event.value = await res.json()
-      isEmpty.value = false;
+      event.value.filter( (e) => {
+      const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "2-digit",
+        hour: "numeric",
+        minute: "numeric",
+      });
+    e.eventStartTime = localDate;
+    });
     }
-    //   console.log(res);
-    // // } catch (error) {
-    //   event.value = []
-    // }
-
-    // const filterID = []
-    // eventFilter.value.filter((ef)=>{
-    //   // console.log(e.id);
-    //   // console.log(ef.id);
-    //   // console.log(e.id == ef.id);
-    //   // e.id == ef.id
-    //   filterID.push(ef.id)
-    // })
-    // console.log(filterID);
-  // if (res. status == 404) {
-  //   isEmpty.value = true;
-  //   event.value = []
-  // } else {
-  //   isEmpty.value = false;
-  // }
-  //   event.value.filter( (e) => {
-  //   const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-  //     weekday: "short",
-  //     month: "short",
-  //     day: "numeric",
-  //     year: "2-digit",
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //   });
-  //   e.eventStartTime = localDate;
-  // });
-    
-  //   console.log(event.value);
-  }
-  
-  // if (categoryStatus.value == 'Up coming') {
-    
-  //   // event.value.filter((ef)=>{
-  //   //   const date =  new Date(ef.eventStartTime)
-  //   //   // const date =  Date.parse(ef.eventStartTime)
-  //   //   // console.log(ef.eventStartTime.toDateString()); 
-  //   //   // new Date(ef.eventStartTime)
-  //   //   console.log(date);
-  //   //   // const date1 = new Date(date)
-  //   //   // console.log(date1);
-  //   // })
-  //   // // console.log(eventFilter.value);
-  //   // // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`)
-  //   // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`,{
-  //   //   method: 'POST',
-  //   //   headers: {
-  //   //     'content-type': 'application/json'
-  //   //   },
-  //   //   body: JSON.stringify(
-  //   //     event.value
-  //   //     // bookingName: name.value,
-  //   //     // bookingEmail: email.value,
-  //   //     // eventStartTime: startTime.value,
-  //   //     // eventDuration: duration.value,
-  //   //     // eventNotes: notes.value,
-  //   //     // eventCategoryID: categoryID.value,
-  //   //     )
-  //   // })
-  //   // // console.log(res.json());
-  //   // event.value = await res.json()
-  //     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`)
-  //     event.value = await res.json()
-  //     event.value.filter((e) => {
-  //   const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-  //     weekday: "short",
-  //     month: "short",
-  //     day: "numeric",
-  //     year: "2-digit",
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //   });
-  //   e.eventStartTime = localDate;
-  // });
-
-  // // const newEvent = []
-
-  // // for (let index = 0; index < eventFilter.value.length; index++) {
-  // //   const evf = eventFilter.value[index];
-  // //   for (let index = 0; index < event.value.length; index++) {
-  // //     const ev = event.value[index];
-  // //     if (evf.id == ev.id) {
-  // //         newEvent.push(ev)
-  // //     }
-  // //   }
-  // // }
-  // // event.value = newEvent
-
-
-
-  // }else if (categoryStatus.value == 'Past') {
-  //   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/past`)
-  //   // console.log(res.json());
-  //   event.value = await res.json()
-  //    event.value.filter((e) => {
-  //   const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-  //     weekday: "short",
-  //     month: "short",
-  //     day: "numeric",
-  //     year: "2-digit",
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //   });
-  //   e.eventStartTime = localDate;
-  // });
-  //   // console.log(event.value);
-  // }
-
-  // // if (event.value.length == 0) {
-  // if (event.value.length == 0) {
-  //   isEmpty.value = true;
-  // } else {
-  //   isEmpty.value = false;
-  // }
-
+}
 }
 
+const filterCategoryStatus = async () =>{
+  isFindeNoByCategory.value = false
+  isFindeNoByUpComing.value = false;
+  isFindeNoByPass.value = false
+  isFindeNoByDate.value = false
+  isEmpty.value = false
+  if (categoryStatus.value == 'Up coming') {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`)
+    if (res.status == 404) {
+      isFindeNoByUpComing.value = true;
+      event.value = []
+    } else {
+      isFindeNoByUpComing.value = false;
+      event.value = await res.json()
+      event.value.filter((e) => {
+      const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "2-digit",
+        hour: "numeric",
+        minute: "numeric",
+      });
+        e.eventStartTime = localDate;
+      });
+    }
+  }else{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/past`)
+    // console.log(res.json());
+    if (res.status == 404) {
+    isFindeNoByPass.value = true
+    event.value = []
+  } else {
+    isFindeNoByPass.value = false
+    event.value = await res.json()
+    event.value.filter((e) => {
+    const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+      hour: "numeric",
+      minute: "numeric",
+    });
+      e.eventStartTime = localDate;
+    });
+  }
+    // console.log(event.value);
+  }
+}
 
-// const filterCategoryStatus = async () =>{
-  
-// //   // console.log(categoryStatus.value);
-//   if (categoryStatus.value == 'Up coming') {
-//     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`)
-//     // console.log(res.json());
-//     event.value = await res.json()
-//      event.value.filter((e) => {
-//     const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-//       weekday: "short",
-//       month: "short",
-//       day: "numeric",
-//       year: "2-digit",
-//       hour: "numeric",
-//       minute: "numeric",
-//     });
-//     e.eventStartTime = localDate;
-//   });
-//   }else{
-//     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/past`)
-//     // console.log(res.json());
-//     event.value = await res.json()
-//      event.value.filter((e) => {
-//     const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-//       weekday: "short",
-//       month: "short",
-//       day: "numeric",
-//       year: "2-digit",
-//       hour: "numeric",
-//       minute: "numeric",
-//     });
-//     e.eventStartTime = localDate;
-//   });
-//     // console.log(event.value);
-//   }
-// //   // if (event.value.length == 0) {
-// //   //   isEmpty.value = true;
-// //   // } else {
-// //   //   isEmpty.value = false;
-// //   // }
+const filterDay = async() =>{
+  isFindeNoByCategory.value = false
+  isFindeNoByUpComing.value = false;
+  isFindeNoByPass.value = false
+  isFindeNoByDate.value = false
+  isEmpty.value = false
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/day/?dateEvent=${startTime.value}`)
+  // console.log(res.json());
+  if (res.status == 404) {
+    isFindeNoByDate.value = true
+    event.value = []
+  } else {
+    isFindeNoByDate.value = false
+    event.value = await res.json()
+    event.value.filter((e) => {
+    const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+      hour: "numeric",
+      minute: "numeric",
+    });
+      e.eventStartTime = localDate;
+    });
+  }
+}
 
-// }
+const resetFilter = ()=>{
+  // if (filterType.value == 'Category') {
+  //   console.log('cate');
+  // }
+  selectCategory.value = "Select category"
+  categoryStatus.value = "Select status"
+  startTime.value = null
+}
+
 const getDetail = (id) => {
   // console.log(id);
   appRouter.push({ name: 'Detail', params: { bookingId: id.bookingId } })
@@ -258,9 +199,6 @@ const cancelEvent = async (id) => {
 
 }
 
-const filterDay = async() =>{
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
-}
 onBeforeMount(async () => {
   await getEvent();
   await getEventCategory()
@@ -286,7 +224,7 @@ onUpdated(()=>{
         class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
         Filter by 
               </div>
-        <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="filterType">
+        <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="filterType" @change="resetFilter">
                 <option select disabled>Select type</option>
                 <option>Category</option>
                 <option>Event status</option>
@@ -295,14 +233,15 @@ onUpdated(()=>{
 
             <div class="grid grid-cols-1 justify-item-center ">
               <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="selectCategory" @change="filterCategory" v-show="filterType =='Category' ">
-                <option selected>All category</option>
+                <option disabled selected>Select category</option>
+                <option>All category</option>
                 <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option>
                 <!-- <option value="" selected>All category</option>
                 <option value="" >Client-side</option>
                 <option value="" >All category</option> -->
               </select>
-              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategory" v-show="filterType =='Event status'">
-                <option disabled selected>Status</option>
+              <select class="select select-bordered w-3/5 max-w-xs" name="" id="" v-model="categoryStatus" @change="filterCategoryStatus" v-show="filterType =='Event status'">
+                <option disabled selected>Select status</option>
                 <option>Up coming</option>
                 <option>Past</option>
                 <!-- <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option> -->
@@ -318,9 +257,20 @@ onUpdated(()=>{
     </div>
     <div class="flex flex-row h-screen">
       <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
-        <div v-show="isEmpty" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">List currently empty</p>
+        <div v-if="isEmpty" class="grid justify-items-center pt-72">
+          <p class="text-2xl text-gray-400">List currently empty.</p>
         </div>
+        <div v-else-if="isFindeNoByCategory" class="grid justify-items-center pt-72">
+          <p class="text-2xl text-gray-400">No Schedule Events.</p>
+        </div>
+        <div v-else-if="isFindeNoByUpComing" class="grid justify-items-center pt-72">
+          <p class="text-2xl text-gray-400">No On-Going or
+            Upcoming Events.</p>
+        </div>
+        <div v-else-if="isFindeNoByDate" class="grid justify-items-center pt-72">
+          <p class="text-2xl text-gray-400">No Schedule Events.</p>
+        </div>
+        
 
         <!-- <div class=" columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1"> -->
         <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">

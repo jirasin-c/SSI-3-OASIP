@@ -6,7 +6,7 @@ const eventCategory = ref([])
 
 onBeforeMount(async()=>{
     await getEventCategory()
-    console.log(eventCategory.value);
+    // console.log(eventCategory.value);
 })
 
 const getEventCategory = async() =>{

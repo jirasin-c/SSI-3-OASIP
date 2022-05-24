@@ -20,9 +20,12 @@
           </div>
       </router-link>
       </div>
-      <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg">Booking</router-link>
-      <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">Event Category</router-link>
+      <div class="ml-5">
+
+        <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg">BOOKS</router-link>
+      <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES</router-link>
       <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
+      </div>
     </div>
     <router-view></router-view>
   </div>
