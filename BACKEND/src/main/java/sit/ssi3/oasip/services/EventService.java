@@ -11,7 +11,7 @@ import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.repositories.EventRepository;
-import sit.ssi3.oasip.request.CreateEventRequest;
+import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.validation.ConstraintViolation;
@@ -107,16 +107,20 @@ public class EventService {
     public List<EventDTO> getListDay(Date dateEvent, String sortBy) {
         if (dateEvent == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "dateEvent is null");
-        System.out.println("kuy : " + dateEvent);
-        Date specifiedDate = new Date(dateEvent.getTime());
-        System.out.println("hee : " + specifiedDate);
+
+        long year = 17134650000000L;
+        Date specifiedDate = new Date();
+        specifiedDate.setTime(dateEvent.getTime()+year);
+        Date endTime = new Date();
+        endTime.setTime(specifiedDate.getTime() + 86400000 );
+
         // find all event
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
 
         // check event
-        eventList = eventList.stream().filter(allEvent -> {
+        eventList = eventList.stream().filter((allEvent) -> {
             Date allStartTime = new Date(allEvent.getEventStartTime().getTime());
-            return specifiedDate.compareTo(allStartTime) == 0;
+            return ((allStartTime.compareTo(specifiedDate) > 0) && (allStartTime.compareTo(endTime) < 0));
         }).collect(Collectors.toList());
 
         //Exception handling
@@ -125,7 +129,7 @@ public class EventService {
     }
 
 
-    public Event createEvent(CreateEventRequest newEvent) {
+    public Event createEvent(CreateEventDTO newEvent) {
         // map event dto request to event
         Event event = new Event();
         event.setId(null);
